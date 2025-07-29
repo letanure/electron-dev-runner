@@ -29,11 +29,14 @@ function MainPane({ selectedPath }: MainPaneProps) {
   const [folderContents, setFolderContents] = useState<FileItem[]>([]);
   const [runningProcesses, setRunningProcesses] = useState<Map<string, any>>(new Map());
   const [openWindows, setOpenWindows] = useState<Map<string, any>>(new Map());
+  const [needsInstall, setNeedsInstall] = useState(false);
+  const [isInstalling, setIsInstalling] = useState(false);
 
   useEffect(() => {
     loadPackageJson();
     loadReadme();
     loadFolderContents();
+    checkDependencies();
   }, [selectedPath]);
 
   const loadPackageJson = () => {
@@ -95,6 +98,68 @@ function MainPane({ selectedPath }: MainPaneProps) {
       console.error('Error reading directory:', error);
       setFolderContents([]);
     }
+  };
+
+  const checkDependencies = () => {
+    try {
+      const packagePath = path.join(selectedPath, 'package.json');
+      const nodeModulesPath = path.join(selectedPath, 'node_modules');
+      const lockFiles = ['package-lock.json', 'yarn.lock', 'pnpm-lock.yaml'];
+      
+      const hasPackageJson = fs.existsSync(packagePath);
+      const hasNodeModules = fs.existsSync(nodeModulesPath);
+      const hasLockFile = lockFiles.some(file => fs.existsSync(path.join(selectedPath, file)));
+      
+      // Need to install if: has package.json AND (no node_modules OR has lockfile but no node_modules)
+      const shouldInstall = hasPackageJson && (!hasNodeModules || (hasLockFile && !hasNodeModules));
+      
+      setNeedsInstall(shouldInstall);
+    } catch (error) {
+      console.error('Error checking dependencies:', error);
+      setNeedsInstall(false);
+    }
+  };
+
+  const detectPackageManager = () => {
+    if (fs.existsSync(path.join(selectedPath, 'pnpm-lock.yaml'))) return 'pnpm';
+    if (fs.existsSync(path.join(selectedPath, 'yarn.lock'))) return 'yarn';
+    return 'npm';
+  };
+
+  const installDependencies = async () => {
+    setIsInstalling(true);
+    const packageManager = detectPackageManager();
+    const projectName = packageJson?.name || path.basename(selectedPath);
+    
+    console.log(`Installing dependencies with ${packageManager} in ${projectName}...`);
+
+    const installProcess = spawn(packageManager, ['install'], {
+      cwd: selectedPath,
+      stdio: 'pipe'
+    });
+
+    installProcess.stdout.on('data', (data: Buffer) => {
+      console.log(`[${packageManager} install]:`, data.toString());
+    });
+
+    installProcess.stderr.on('data', (data: Buffer) => {
+      console.error(`[${packageManager} install ERROR]:`, data.toString());
+    });
+
+    installProcess.on('close', (code: number) => {
+      setIsInstalling(false);
+      if (code === 0) {
+        console.log(`Dependencies installed successfully with ${packageManager}`);
+        setNeedsInstall(false);
+      } else {
+        console.error(`Dependency installation failed with code ${code}`);
+      }
+    });
+
+    installProcess.on('error', (error: Error) => {
+      console.error(`Failed to run ${packageManager} install:`, error);
+      setIsInstalling(false);
+    });
   };
 
   const isDevScript = (scriptName: string, command: string): boolean => {
@@ -290,6 +355,23 @@ function MainPane({ selectedPath }: MainPaneProps) {
             {packageJson.version && <span className="version">v{packageJson.version}</span>}
             {packageJson.description && <p className="description">{packageJson.description}</p>}
           </div>
+
+          {needsInstall && (
+            <div className="install-warning">
+              <div className="warning-message">
+                <span className="warning-icon">⚠️</span>
+                <span>Dependencies not installed. Install them to run dev scripts.</span>
+              </div>
+              <button 
+                className={`install-button ${isInstalling ? 'installing' : ''}`}
+                onClick={installDependencies}
+                disabled={isInstalling}
+                type="button"
+              >
+                {isInstalling ? '🔄 Installing...' : `📦 Install with ${detectPackageManager()}`}
+              </button>
+            </div>
+          )}
           
           {packageJson.scripts && (
             <div className="scripts">
@@ -303,10 +385,11 @@ function MainPane({ selectedPath }: MainPaneProps) {
                       <div key={name} className="script-item">
                         <div className="script-controls">
                           <button 
-                            className={`script-button ${isRunning ? 'running' : ''}`}
+                            className={`script-button ${isRunning ? 'running' : ''} ${needsInstall ? 'needs-install' : ''}`}
                             onClick={() => runScript(name)}
-                            disabled={isRunning}
+                            disabled={isRunning || needsInstall}
                             type="button"
+                            title={needsInstall ? 'Install dependencies first' : ''}
                           >
                             {isRunning ? '🔄' : '▶️'} {name}
                           </button>
