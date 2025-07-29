@@ -1,3 +1,9 @@
+## [1.2.0](https://github.com/letanure/electron-dev-runner/compare/v1.1.0...v1.2.0) (2025-07-29)
+
+### 🚀 Features
+
+* add ServerPanel ([5e12671](https://github.com/letanure/electron-dev-runner/commit/5e1267122218a437598e3d9d587521a37b5ee895))
+
 ## [1.1.0](https://github.com/letanure/electron-dev-runner/compare/v1.0.10...v1.1.0) (2025-07-29)
 
 ### 🚀 Features
