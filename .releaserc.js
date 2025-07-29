@@ -51,6 +51,7 @@ module.exports = {
       "@semantic-release/npm",
       {
         npmPublish: true, // Publish as CLI tool
+        access: "public", // Required for scoped packages
       },
     ],
     [
