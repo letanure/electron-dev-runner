@@ -60,6 +60,15 @@
   margin: 0 4px;
 }
 
+.breadcrumb-file {
+  color: var(--gh-fg-default);
+  font-weight: 500;
+  background-color: var(--gh-accent-subtle);
+  border: 1px solid var(--gh-accent-muted);
+  border-radius: 3px;
+  padding: 2px 6px;
+}
+
 .main-content {
   display: flex;
   flex: 1;

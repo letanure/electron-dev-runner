@@ -8,6 +8,7 @@ import { ThemeProvider } from './contexts/ThemeContext'
 
 function App() {
   const [selectedPath, setSelectedPath] = useState(process.cwd());
+  const [viewingFile, setViewingFile] = useState<string | null>(null);
 
   return (
     <ThemeProvider>
@@ -20,6 +21,8 @@ function App() {
           <Breadcrumb 
             selectedPath={selectedPath}
             onSelectPath={setSelectedPath}
+            viewingFile={viewingFile}
+            onCloseFile={() => setViewingFile(null)}
           />
         </header>
         
@@ -32,7 +35,11 @@ function App() {
           </aside>
           
           <main className="content">
-            <MainPane selectedPath={selectedPath} />
+            <MainPane 
+              selectedPath={selectedPath} 
+              onSelectPath={setSelectedPath}
+              onViewFile={setViewingFile}
+            />
           </main>
         </div>
       </div>

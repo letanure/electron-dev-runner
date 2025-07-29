@@ -1,13 +1,15 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import './MainPane.css';
 import { FolderIcon, FileIcon } from './Icons';
 
-const fs = require('fs');
-const path = require('path');
-const { spawn } = require('child_process');
+const fs = require('node:fs');
+const path = require('node:path');
+const { spawn } = require('node:child_process');
 
 interface MainPaneProps {
   selectedPath: string;
+  onSelectPath: (path: string) => void;
+  onViewFile?: (filePath: string | null) => void;
 }
 
 interface PackageJson {
@@ -23,7 +25,7 @@ interface FileItem {
   path: string;
 }
 
-function MainPane({ selectedPath }: MainPaneProps) {
+function MainPane({ selectedPath, onSelectPath, onViewFile }: MainPaneProps) {
   const [packageJson, setPackageJson] = useState<PackageJson | null>(null);
   const [readmeContent, setReadmeContent] = useState<string | null>(null);
   const [readmeFile, setReadmeFile] = useState<string | null>(null);
@@ -32,12 +34,17 @@ function MainPane({ selectedPath }: MainPaneProps) {
   const [openWindows, setOpenWindows] = useState<Map<string, any>>(new Map());
   const [needsInstall, setNeedsInstall] = useState(false);
   const [isInstalling, setIsInstalling] = useState(false);
+  const [viewingFile, setViewingFile] = useState<string | null>(null);
+  const [fileContent, setFileContent] = useState<string | null>(null);
 
   useEffect(() => {
     loadPackageJson();
     loadReadme();
     loadFolderContents();
     checkDependencies();
+    setViewingFile(null);
+    setFileContent(null);
+    onViewFile?.(null);
   }, [selectedPath]);
 
   const loadPackageJson = () => {
@@ -82,13 +89,13 @@ function MainPane({ selectedPath }: MainPaneProps) {
   const loadFolderContents = () => {
     try {
       const files = fs.readdirSync(selectedPath, { withFileTypes: true });
-      const fileItems = files.map((dirent: any) => ({
+      const fileItems = files.map((dirent: { name: string; isDirectory: () => boolean }) => ({
         name: dirent.name,
         isDirectory: dirent.isDirectory(),
         path: path.join(selectedPath, dirent.name)
       }));
       
-      fileItems.sort((a, b) => {
+      fileItems.sort((a: FileItem, b: FileItem) => {
         if (a.isDirectory && !b.isDirectory) return -1;
         if (!a.isDirectory && b.isDirectory) return 1;
         return a.name.localeCompare(b.name);
@@ -184,7 +191,7 @@ function MainPane({ selectedPath }: MainPaneProps) {
     for (const pattern of patterns) {
       const match = output.match(pattern);
       if (match) {
-        return parseInt(match[1]);
+        return Number.parseInt(match[1], 10);
       }
     }
     return null;
@@ -347,6 +354,62 @@ function MainPane({ selectedPath }: MainPaneProps) {
       .replace(/\n/g, '<br/>');
   };
 
+  const isDevFile = (fileName: string): boolean => {
+    const devExtensions = ['.txt', '.md', '.js', '.ts', '.jsx', '.tsx', '.json', '.css', '.scss', '.html', '.xml', '.yaml', '.yml', '.toml', '.ini', '.env', '.gitignore', '.py', '.rs', '.go', '.java', '.c', '.cpp', '.h', '.hpp'];
+    const extension = path.extname(fileName).toLowerCase();
+    return devExtensions.includes(extension) || fileName.startsWith('.');
+  };
+
+  const loadFileContent = async (filePath: string) => {
+    try {
+      const content = fs.readFileSync(filePath, 'utf8');
+      setFileContent(content);
+      setViewingFile(filePath);
+      onViewFile?.(filePath);
+    } catch (error) {
+      console.error('Error reading file:', error);
+      setFileContent('Error reading file');
+      setViewingFile(filePath);
+      onViewFile?.(filePath);
+    }
+  };
+
+  const handleItemClick = (item: FileItem) => {
+    if (item.isDirectory) {
+      onSelectPath(item.path);
+    } else if (isDevFile(item.name)) {
+      loadFileContent(item.path);
+    }
+  };
+
+  const getFileLanguage = (fileName: string): string => {
+    const extension = path.extname(fileName).toLowerCase();
+    const languageMap: Record<string, string> = {
+      '.js': 'javascript',
+      '.jsx': 'javascript',
+      '.ts': 'typescript',
+      '.tsx': 'typescript',
+      '.json': 'json',
+      '.css': 'css',
+      '.scss': 'scss',
+      '.html': 'html',
+      '.xml': 'xml',
+      '.yaml': 'yaml',
+      '.yml': 'yaml',
+      '.md': 'markdown',
+      '.py': 'python',
+      '.rs': 'rust',
+      '.go': 'go',
+      '.java': 'java',
+      '.c': 'c',
+      '.cpp': 'cpp',
+      '.h': 'c',
+      '.hpp': 'cpp'
+    };
+    return languageMap[extension] || 'text';
+  };
+
+
   return (
     <div className="main-pane">
       {packageJson && (
@@ -431,12 +494,12 @@ function MainPane({ selectedPath }: MainPaneProps) {
         </div>
       )}
 
-      {!packageJson && !readmeContent && folderContents.length > 0 && (
+      {!packageJson && !readmeContent && !viewingFile && folderContents.length > 0 && (
         <div className="folder-contents">
           <table className="gh-file-table">
             <thead>
               <tr className="gh-file-table-header">
-                <th colSpan="2" className="gh-file-name-header">
+                <th colSpan={2} className="gh-file-name-header">
                   <span className="gh-text-bold">Name</span>
                 </th>
               </tr>
@@ -444,8 +507,11 @@ function MainPane({ selectedPath }: MainPaneProps) {
             <tbody>
               {folderContents.map((item) => (
                 <tr key={item.path} className="gh-file-row">
-                  <td colSpan="2" className="gh-file-name-cell">
-                    <div className="gh-file-name-content">
+                  <td colSpan={2} className="gh-file-name-cell">
+                    <div 
+                      className="gh-file-name-content"
+                      onClick={() => handleItemClick(item)}
+                    >
                       <span className="gh-file-icon">
                         {item.isDirectory ? <FolderIcon size={16} /> : <FileIcon size={16} />}
                       </span>
@@ -463,7 +529,23 @@ function MainPane({ selectedPath }: MainPaneProps) {
         </div>
       )}
 
-      {!packageJson && !readmeContent && folderContents.length === 0 && (
+      {!packageJson && !readmeContent && viewingFile && fileContent && (
+        <div className="file-viewer">
+          <div className="file-viewer-header">
+            <div className="file-viewer-title">
+              <FileIcon size={16} />
+              <span>{path.basename(viewingFile)}</span>
+            </div>
+          </div>
+          <div className="file-viewer-content">
+            <pre className={`file-content language-${getFileLanguage(viewingFile)}`}>
+              <code>{fileContent}</code>
+            </pre>
+          </div>
+        </div>
+      )}
+
+      {!packageJson && !readmeContent && !viewingFile && folderContents.length === 0 && (
         <div className="empty-state">
           <p><FolderIcon size={16} /> Empty folder</p>
         </div>

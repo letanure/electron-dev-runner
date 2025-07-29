@@ -343,6 +343,12 @@
   gap: 8px;
   padding: 8px 16px;
   min-height: 32px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.gh-file-name-content:hover {
+  background-color: var(--gh-canvas-subtle);
 }
 
 .gh-file-icon {
@@ -377,6 +383,71 @@
 
 .gh-file-name:hover {
   text-decoration: underline;
+}
+
+/* File Viewer */
+.file-viewer {
+  background-color: var(--gh-canvas-default);
+  border: 1px solid var(--gh-border-default);
+  border-radius: 6px;
+  box-shadow: var(--gh-shadow-small);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.file-viewer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background-color: var(--gh-canvas-subtle);
+  border-bottom: 1px solid var(--gh-border-default);
+}
+
+.file-viewer-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gh-fg-default);
+}
+
+.close-file-button {
+  padding: 4px 8px;
+  font-size: 12px;
+  min-width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.file-viewer-content {
+  max-height: 500px;
+  overflow: auto;
+  background-color: var(--gh-canvas-inset);
+}
+
+.file-content {
+  margin: 0;
+  padding: 16px;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--gh-fg-default);
+  background-color: transparent;
+  overflow-x: auto;
+  white-space: pre;
+  word-wrap: normal;
+}
+
+.file-content code {
+  background: none;
+  padding: 0;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
 }
 
 .empty-state {

@@ -89,20 +89,7 @@
 }
 
 /* GitHub-style file tree indentation lines */
-.tree-node::before {
-  content: '';
-  position: absolute;
-  left: 8px;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background-color: var(--gh-border-muted);
-  opacity: 0.5;
-}
 
-.tree-node:last-child::before {
-  height: 10px;
-}
 
 /* Hide line for root level items */
 .tree-node[style*="paddingLeft: 10px"]::before {
