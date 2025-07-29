@@ -12,7 +12,7 @@ function Breadcrumb({ selectedPath, onSelectPath }: BreadcrumbProps) {
   return (
     <div className="breadcrumb">
       <span className="breadcrumb-item" onClick={() => onSelectPath(homeDir)}>
-        🏠 Home
+        Home
       </span>
       {relativePath.map((part, index) => {
         const fullPath = path.join(homeDir, ...relativePath.slice(0, index + 1));

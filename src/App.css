@@ -2,69 +2,82 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #1a1a1a;
-  color: #ffffff;
-  text-align: left;
+  background-color: var(--gh-canvas-default);
+  color: var(--gh-fg-default);
 }
 
 .header {
-  border-bottom: 1px solid #333;
-  background-color: #2a2a2a;
+  border-bottom: 1px solid var(--gh-border-default);
+  background-color: var(--gh-canvas-default);
   flex-shrink: 0;
+  box-shadow: var(--gh-shadow-small);
 }
 
 .header-top {
-  padding: 0.75rem;
-  border-bottom: 1px solid #333;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--gh-border-muted);
+  background-color: var(--gh-canvas-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .header h1 {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--gh-fg-default);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .breadcrumb {
-  padding: 0.5rem 0.75rem;
-  background-color: #333;
-  font-size: 0.75rem;
+  padding: 8px 16px;
+  background-color: var(--gh-canvas-default);
+  font-size: 12px;
   overflow-x: auto;
   white-space: nowrap;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
 }
 
 .breadcrumb-item {
-  color: #ccc !important;
+  color: var(--gh-accent-fg);
   cursor: pointer;
-  padding: 0.2rem 0.3rem;
+  padding: 2px 4px;
   border-radius: 3px;
-  transition: background-color 0.2s;
+  transition: background-color 0.15s ease;
+  text-decoration: none;
 }
 
 .breadcrumb-item:hover {
-  background-color: #646cff;
-  color: white !important;
+  background-color: var(--gh-neutral-muted);
+  text-decoration: none;
 }
 
 .breadcrumb-separator {
-  color: #666;
-  margin: 0 0.2rem;
+  color: var(--gh-fg-muted);
+  margin: 0 4px;
 }
 
 .main-content {
   display: flex;
   flex: 1;
   overflow: hidden;
+  gap: 1px;
+  background-color: var(--gh-border-default);
 }
 
 .sidebar {
-  width: 300px;
-  background-color: #2a2a2a;
-  border-right: 1px solid #333;
+  width: 280px;
+  background-color: var(--gh-canvas-default);
+  border-right: 1px solid var(--gh-border-default);
   overflow-y: auto;
   flex-shrink: 0;
 }
 
 .content {
   flex: 1;
-  background-color: #1a1a1a;
+  background-color: var(--gh-canvas-default);
   overflow-y: auto;
 }

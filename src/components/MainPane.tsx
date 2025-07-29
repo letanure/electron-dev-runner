@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './MainPane.css';
+import { FolderIcon, FileIcon } from './Icons';
 
 const fs = require('fs');
 const path = require('path');
@@ -350,7 +351,7 @@ function MainPane({ selectedPath }: MainPaneProps) {
     <div className="main-pane">
       {packageJson && (
         <div className="package-section">
-          <h3>📦 {packageJson.name || 'Node.js Project'}</h3>
+          <h3><FolderIcon size={16} className="has-package" /> {packageJson.name || 'Node.js Project'}</h3>
           <div className="package-info">
             {packageJson.version && <span className="version">v{packageJson.version}</span>}
             {packageJson.description && <p className="description">{packageJson.description}</p>}
@@ -421,7 +422,7 @@ function MainPane({ selectedPath }: MainPaneProps) {
       {readmeContent && (packageJson || !packageJson) && (
         <div className="readme-section">
           <div className="readme-header">
-            <h4>📄 {readmeFile}</h4>
+            <h4><FileIcon size={16} /> {readmeFile}</h4>
           </div>
           <div 
             className="readme-content"
@@ -432,26 +433,39 @@ function MainPane({ selectedPath }: MainPaneProps) {
 
       {!packageJson && !readmeContent && folderContents.length > 0 && (
         <div className="folder-contents">
-          <h4>📁 Folder Contents</h4>
-          <div className="file-list">
-            {folderContents.map((item) => (
-              <div
-                key={item.path}
-                className={`file-item ${item.isDirectory ? 'directory' : 'file'}`}
-              >
-                <span className="icon">
-                  {item.isDirectory ? '📁' : '📄'}
-                </span>
-                <span className="name">{item.name}</span>
-              </div>
-            ))}
-          </div>
+          <table className="gh-file-table">
+            <thead>
+              <tr className="gh-file-table-header">
+                <th colSpan="2" className="gh-file-name-header">
+                  <span className="gh-text-bold">Name</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {folderContents.map((item) => (
+                <tr key={item.path} className="gh-file-row">
+                  <td colSpan="2" className="gh-file-name-cell">
+                    <div className="gh-file-name-content">
+                      <span className="gh-file-icon">
+                        {item.isDirectory ? <FolderIcon size={16} /> : <FileIcon size={16} />}
+                      </span>
+                      <div className="gh-file-name-wrapper">
+                        <div className="gh-file-name-truncate">
+                          <span className="gh-file-name">{item.name}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
 
       {!packageJson && !readmeContent && folderContents.length === 0 && (
         <div className="empty-state">
-          <p>📁 Empty folder</p>
+          <p><FolderIcon size={16} /> Empty folder</p>
         </div>
       )}
     </div>

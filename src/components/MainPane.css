@@ -1,183 +1,215 @@
 .main-pane {
-  padding: 1.25rem;
+  padding: 16px;
   height: 100%;
   overflow-y: auto;
 }
 
 .package-section {
-  background-color: #2a2a2a;
-  padding: 1.25rem;
+  background-color: var(--gh-canvas-default);
+  border: 1px solid var(--gh-border-default);
   border-radius: 6px;
-  margin-bottom: 1.5rem;
-  border-left: 4px solid #4ade80;
+  margin-bottom: 16px;
+  box-shadow: var(--gh-shadow-small);
 }
 
 .package-section h3 {
-  margin: 0 0 0.75rem 0;
-  color: #4ade80;
-  font-size: 1.1rem;
+  margin: 0;
+  color: var(--gh-fg-default);
+  font-size: 16px;
+  font-weight: 600;
+  padding: 16px 16px 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .package-info {
-  margin-bottom: 1rem;
+  padding: 8px 16px 16px 16px;
+  border-bottom: 1px solid var(--gh-border-muted);
 }
 
 .version {
-  background-color: #646cff;
-  color: white;
-  padding: 0.2rem 0.5rem;
+  background-color: var(--gh-accent-subtle);
+  color: var(--gh-accent-fg);
+  padding: 2px 8px;
   border-radius: 12px;
-  font-size: 0.7rem;
+  font-size: 12px;
+  font-weight: 500;
   display: inline-block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 8px;
+  border: 1px solid var(--gh-accent-muted);
 }
 
 .description {
   margin: 0;
-  color: #ccc;
-  font-size: 0.85rem;
-  line-height: 1.4;
+  color: var(--gh-fg-muted);
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .install-warning {
-  background-color: #2a1f17;
-  border: 1px solid #ff9500;
-  border-radius: 4px;
-  padding: 0.75rem;
-  margin-bottom: 1rem;
+  background-color: var(--gh-attention-subtle);
+  border: 1px solid var(--gh-attention-muted);
+  border-radius: 6px;
+  padding: 16px;
+  margin: 16px;
 }
 
 .warning-message {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
-  color: #ff9500;
-  font-size: 0.8rem;
+  gap: 8px;
+  margin-bottom: 12px;
+  color: var(--gh-attention-fg);
+  font-size: 14px;
 }
 
 .warning-icon {
-  font-size: 0.9rem;
+  font-size: 16px;
 }
 
 .install-button {
-  background-color: #ff9500;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 0.4rem 0.8rem;
-  font-size: 0.75rem;
+  background-color: var(--gh-attention-emphasis);
+  color: var(--gh-fg-on-emphasis);
+  border: 1px solid rgba(31, 35, 40, 0.15);
+  border-radius: 6px;
+  padding: 5px 16px;
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 80ms cubic-bezier(0.33, 1, 0.68, 1);
+  box-shadow: var(--gh-shadow-small);
 }
 
 .install-button:hover {
-  background-color: #e6840a;
+  background-color: var(--gh-attention-fg);
 }
 
 .install-button.installing {
-  background-color: #666;
+  background-color: var(--gh-neutral-muted);
   cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .install-button:disabled {
-  opacity: 0.7;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
+.scripts {
+  padding: 16px;
+}
+
 .scripts h4 {
-  margin: 0 0 0.75rem 0;
-  font-size: 0.9rem;
-  color: #ddd;
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gh-fg-default);
 }
 
 .script-buttons {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 8px;
 }
 
 .script-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--gh-border-muted);
+}
+
+.script-item:last-child {
+  border-bottom: none;
 }
 
 .script-controls {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: 8px;
 }
 
 .script-button {
-  padding: 0.25rem 0.5rem;
-  background-color: #646cff;
-  color: white;
-  border: none;
-  border-radius: 3px;
+  padding: 4px 12px;
+  background-color: var(--gh-accent-emphasis);
+  color: var(--gh-fg-on-emphasis);
+  border: 1px solid rgba(31, 35, 40, 0.15);
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 0.7rem;
-  min-width: 60px;
-  text-align: left;
-  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 500;
+  min-width: 70px;
+  text-align: center;
+  box-shadow: var(--gh-shadow-small);
+  transition: background-color 80ms cubic-bezier(0.33, 1, 0.68, 1);
 }
 
 .script-button:hover {
-  background-color: #535bf2;
+  background-color: var(--gh-accent-fg);
 }
 
 .script-button.running {
-  background-color: #34C759;
-  cursor: not-allowed;
+  background-color: var(--gh-success-emphasis);
+  border-color: rgba(31, 35, 40, 0.15);
+}
+
+.script-button.running:hover {
+  background-color: var(--gh-success-fg);
 }
 
 .script-button:disabled {
-  opacity: 0.7;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
 .script-button.needs-install {
-  background-color: #666;
-  opacity: 0.5;
+  background-color: var(--gh-neutral-muted);
+  color: var(--gh-fg-muted);
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
 .running-indicator {
-  color: #34C759;
-  font-size: 0.6rem;
+  color: var(--gh-success-fg);
+  font-size: 12px;
   font-weight: 500;
 }
 
 .stop-button {
-  padding: 0.25rem 0.4rem;
-  background-color: #ff4757;
-  color: white;
-  border: none;
-  border-radius: 3px;
+  padding: 4px 8px;
+  background-color: var(--gh-danger-emphasis);
+  color: var(--gh-fg-on-emphasis);
+  border: 1px solid rgba(31, 35, 40, 0.15);
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 0.7rem;
-  min-width: 30px;
+  font-size: 12px;
+  min-width: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s;
+  box-shadow: var(--gh-shadow-small);
+  transition: background-color 80ms cubic-bezier(0.33, 1, 0.68, 1);
 }
 
 .stop-button:hover {
-  background-color: #ff3742;
+  background-color: var(--gh-danger-fg);
 }
 
 .no-dev-scripts {
-  color: #666;
-  font-size: 0.75rem;
+  color: var(--gh-fg-muted);
+  font-size: 14px;
   font-style: italic;
   margin: 0;
+  text-align: center;
+  padding: 16px;
 }
 
 .script-command {
-  font-family: monospace;
-  font-size: 0.65rem;
-  color: #999;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+  font-size: 12px;
+  color: var(--gh-fg-muted);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -186,130 +218,175 @@
 }
 
 .readme-section {
-  background-color: #222;
+  background-color: var(--gh-canvas-default);
+  border: 1px solid var(--gh-border-default);
   border-radius: 6px;
-  margin-bottom: 1.5rem;
-  border: 1px solid #333;
+  margin-bottom: 16px;
+  box-shadow: var(--gh-shadow-small);
 }
 
 .readme-header {
-  padding: 0.75rem 1rem;
-  background-color: #2a2a2a;
-  border-bottom: 1px solid #333;
+  padding: 16px;
+  background-color: var(--gh-canvas-subtle);
+  border-bottom: 1px solid var(--gh-border-muted);
   border-radius: 6px 6px 0 0;
 }
 
 .readme-header h4 {
   margin: 0;
-  font-size: 0.9rem;
-  color: #ddd;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gh-fg-default);
 }
 
 .readme-content {
-  padding: 1.25rem;
+  padding: 16px;
   max-height: 400px;
   overflow-y: auto;
-  font-size: 0.85rem;
-  line-height: 1.6;
-  color: #ddd;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--gh-fg-default);
 }
 
 .readme-content h1 {
-  color: #fff;
-  font-size: 1.5rem;
-  margin: 0 0 1rem 0;
-  border-bottom: 1px solid #333;
-  padding-bottom: 0.5rem;
+  color: var(--gh-fg-default);
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+  border-bottom: 1px solid var(--gh-border-muted);
+  padding-bottom: 8px;
 }
 
 .readme-content h2 {
-  color: #fff;
-  font-size: 1.2rem;
-  margin: 1.5rem 0 0.75rem 0;
+  color: var(--gh-fg-default);
+  font-size: 20px;
+  font-weight: 600;
+  margin: 24px 0 12px 0;
 }
 
 .readme-content h3 {
-  color: #fff;
-  font-size: 1rem;
-  margin: 1rem 0 0.5rem 0;
+  color: var(--gh-fg-default);
+  font-size: 16px;
+  font-weight: 600;
+  margin: 16px 0 8px 0;
 }
 
 .readme-content code {
-  background-color: #1a1a1a;
-  color: #4ade80;
-  padding: 0.2rem 0.4rem;
+  background-color: var(--gh-neutral-muted);
+  color: var(--gh-fg-default);
+  padding: 2px 4px;
   border-radius: 3px;
-  font-family: monospace;
-  font-size: 0.8rem;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+  font-size: 12px;
 }
 
 .readme-content strong {
-  color: #fff;
+  color: var(--gh-fg-default);
   font-weight: 600;
 }
 
 .readme-content em {
-  color: #ccc;
+  color: var(--gh-fg-muted);
   font-style: italic;
 }
 
 .folder-contents {
-  background-color: #222;
+  background-color: var(--gh-canvas-default);
+  border: 1px solid var(--gh-border-default);
   border-radius: 6px;
-  border: 1px solid #333;
-  padding: 1rem;
+  box-shadow: var(--gh-shadow-small);
+  overflow: hidden;
 }
 
-.folder-contents h4 {
-  margin: 0 0 0.75rem 0;
-  font-size: 0.9rem;
-  color: #ddd;
+/* GitHub-style file table */
+.gh-file-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--gh-canvas-default);
 }
 
-.file-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
+.gh-file-table-header {
+  background-color: var(--gh-canvas-subtle);
+  border-bottom: 1px solid var(--gh-border-default);
 }
 
-.file-item {
+.gh-file-name-header {
+  padding: 8px 16px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gh-fg-default);
+  border: none;
+}
+
+.gh-file-row {
+  border-bottom: 1px solid var(--gh-border-muted);
+  transition: background-color 0.15s ease;
+}
+
+.gh-file-row:hover {
+  background-color: var(--gh-canvas-subtle);
+}
+
+.gh-file-row:last-child {
+  border-bottom: none;
+}
+
+.gh-file-name-cell {
+  padding: 0;
+  border: none;
+}
+
+.gh-file-name-content {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.4rem 0.6rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  transition: background-color 0.2s;
+  gap: 8px;
+  padding: 8px 16px;
+  min-height: 32px;
 }
 
-.file-item:hover {
-  background-color: #333;
+.gh-file-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  width: 16px;
+  height: 16px;
 }
 
-.file-item.directory {
+.gh-file-name-wrapper {
+  overflow: hidden;
+  flex: 1;
+  min-width: 0;
+}
+
+.gh-file-name-truncate {
+  overflow: hidden;
+}
+
+.gh-file-name {
+  font-size: 14px;
   font-weight: 500;
-}
-
-.icon {
-  font-size: 0.9rem;
-  width: 1.2rem;
-  text-align: center;
-}
-
-.name {
+  color: var(--gh-accent-fg);
+  text-decoration: none;
+  cursor: pointer;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  display: block;
+}
+
+.gh-file-name:hover {
+  text-decoration: underline;
 }
 
 .empty-state {
   text-align: center;
-  color: #666;
-  padding: 3rem 1rem;
+  color: var(--gh-fg-muted);
+  padding: 48px 16px;
   font-style: italic;
 }
 
 .empty-state p {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: 14px;
 }

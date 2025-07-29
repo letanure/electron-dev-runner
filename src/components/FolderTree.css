@@ -1,32 +1,36 @@
 .folder-tree {
   height: 100%;
   overflow-y: auto;
-  padding: 0.5rem;
+  padding: 8px;
+  font-size: 14px;
 }
 
 .tree-node {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
-  padding: 0.2rem 0.4rem;
-  font-size: 0.75rem;
-  border-radius: 3px;
+  gap: 6px;
+  padding: 0;
   margin: 0;
-  transition: background-color 0.2s;
+  position: relative;
 }
 
-.tree-node.selected {
-  background-color: #34C759;
+.tree-node.selected .folder-content {
+  background-color: var(--gh-accent-emphasis);
+  color: var(--gh-fg-on-emphasis);
+  border-radius: 6px;
 }
 
 .expand-icon {
-  width: 10px;
-  font-size: 0.6rem;
-  color: #888;
+  width: 16px;
+  height: 20px;
+  font-size: 10px;
+  color: var(--gh-fg-muted);
   user-select: none;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 3px;
+  transition: all 0.15s ease;
 }
 
 .expand-icon.expandable {
@@ -34,38 +38,73 @@
 }
 
 .expand-icon.expandable:hover {
-  color: #fff;
-  background-color: #4a4a4a;
-  border-radius: 2px;
+  background-color: var(--gh-neutral-muted);
+  color: var(--gh-fg-default);
 }
 
 .folder-content {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: 6px;
   cursor: pointer;
   flex: 1;
-  padding: 0.1rem 0.2rem;
-  border-radius: 2px;
-  transition: background-color 0.15s;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background-color 0.15s ease;
+  min-height: 20px;
 }
 
 .folder-content:hover {
-  background-color: #3a3a3a;
+  background-color: var(--gh-neutral-muted);
 }
 
 .tree-node.selected .folder-content:hover {
-  background-color: transparent;
+  background-color: var(--gh-accent-emphasis);
 }
 
 .folder-icon {
-  font-size: 0.8rem;
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .folder-name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #e0e0e0;
+  color: var(--gh-fg-default);
   font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  flex: 1;
+  min-width: 0;
+}
+
+.tree-node.selected .folder-name {
+  color: var(--gh-fg-on-emphasis);
+  font-weight: 500;
+}
+
+/* GitHub-style file tree indentation lines */
+.tree-node::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: var(--gh-border-muted);
+  opacity: 0.5;
+}
+
+.tree-node:last-child::before {
+  height: 10px;
+}
+
+/* Hide line for root level items */
+.tree-node[style*="paddingLeft: 10px"]::before {
+  display: none;
 }

@@ -1,0 +1,265 @@
+/* GitHub-style Theme System */
+
+:root {
+  /* GitHub Light Theme */
+  --gh-canvas-default: #ffffff;
+  --gh-canvas-overlay: #ffffff;
+  --gh-canvas-inset: #f6f8fa;
+  --gh-canvas-subtle: #f6f8fa;
+  
+  --gh-fg-default: #1f2328;
+  --gh-fg-muted: #656d76;
+  --gh-fg-subtle: #6e7781;
+  --gh-fg-on-emphasis: #ffffff;
+  
+  --gh-border-default: #d1d9e0;
+  --gh-border-muted: #d8dee4;
+  --gh-border-subtle: #afb8c1;
+  
+  --gh-neutral-muted: rgba(175, 184, 193, 0.2);
+  --gh-accent-fg: #0969da;
+  --gh-accent-emphasis: #0969da;
+  --gh-accent-muted: rgba(84, 174, 255, 0.4);
+  --gh-accent-subtle: #ddf4ff;
+  
+  --gh-success-fg: #1a7f37;
+  --gh-success-emphasis: #1f883d;
+  --gh-success-muted: rgba(74, 194, 107, 0.4);
+  --gh-success-subtle: #dafbe1;
+  
+  --gh-attention-fg: #9a6700;
+  --gh-attention-emphasis: #bf8700;
+  --gh-attention-muted: rgba(212, 167, 44, 0.4);
+  --gh-attention-subtle: #fff8c5;
+  
+  --gh-danger-fg: #d1242f;
+  --gh-danger-emphasis: #cf222e;
+  --gh-danger-muted: rgba(255, 129, 130, 0.4);
+  --gh-danger-subtle: #ffebe9;
+  
+  --gh-shadow-small: 0 1px 0 rgba(31, 35, 40, 0.04);
+  --gh-shadow-medium: 0 3px 6px rgba(140, 149, 159, 0.15);
+  --gh-shadow-large: 0 8px 24px rgba(140, 149, 159, 0.2);
+  
+  --gh-overlay-shadow: 0 16px 32px rgba(31, 35, 40, 0.15);
+}
+
+[data-theme="dark"] {
+  /* GitHub Dark Theme */
+  --gh-canvas-default: #0d1117;
+  --gh-canvas-overlay: #161b22;
+  --gh-canvas-inset: #010409;
+  --gh-canvas-subtle: #161b22;
+  
+  --gh-fg-default: #e6edf3;
+  --gh-fg-muted: #7d8590;
+  --gh-fg-subtle: #6e7681;
+  --gh-fg-on-emphasis: #ffffff;
+  
+  --gh-border-default: #30363d;
+  --gh-border-muted: #21262d;
+  --gh-border-subtle: #484f58;
+  
+  --gh-neutral-muted: rgba(110, 118, 129, 0.4);
+  --gh-accent-fg: #2f81f7;
+  --gh-accent-emphasis: #1f6feb;
+  --gh-accent-muted: rgba(56, 139, 253, 0.4);
+  --gh-accent-subtle: #0d419d;
+  
+  --gh-success-fg: #3fb950;
+  --gh-success-emphasis: #238636;
+  --gh-success-muted: rgba(46, 160, 67, 0.4);
+  --gh-success-subtle: #0f5132;
+  
+  --gh-attention-fg: #d29922;
+  --gh-attention-emphasis: #9e6a03;
+  --gh-attention-muted: rgba(187, 128, 9, 0.4);
+  --gh-attention-subtle: #4d2d00;
+  
+  --gh-danger-fg: #f85149;
+  --gh-danger-emphasis: #da3633;
+  --gh-danger-muted: rgba(248, 81, 73, 0.4);
+  --gh-danger-subtle: #67060c;
+  
+  --gh-shadow-small: 0 0 transparent;
+  --gh-shadow-medium: 0 3px 6px #010409;
+  --gh-shadow-large: 0 8px 24px #010409;
+  
+  --gh-overlay-shadow: 0 16px 32px rgba(1, 4, 9, 0.85);
+}
+
+/* GitHub Typography */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--gh-fg-default);
+  background-color: var(--gh-canvas-default);
+}
+
+/* GitHub Button Styles */
+.gh-btn {
+  position: relative;
+  display: inline-block;
+  padding: 5px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid;
+  border-radius: 6px;
+  appearance: none;
+  text-decoration: none;
+  transition: 80ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.gh-btn-primary {
+  color: var(--gh-fg-on-emphasis);
+  background-color: var(--gh-accent-emphasis);
+  border-color: rgba(31, 35, 40, 0.15);
+  box-shadow: var(--gh-shadow-small), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.gh-btn-primary:hover {
+  background-color: var(--gh-accent-fg);
+  border-color: rgba(31, 35, 40, 0.15);
+}
+
+.gh-btn-secondary {
+  color: var(--gh-fg-default);
+  background-color: var(--gh-canvas-default);
+  border-color: var(--gh-border-default);
+  box-shadow: var(--gh-shadow-small);
+}
+
+.gh-btn-secondary:hover {
+  background-color: var(--gh-canvas-subtle);
+  border-color: var(--gh-border-default);
+}
+
+.gh-btn-danger {
+  color: var(--gh-fg-on-emphasis);
+  background-color: var(--gh-danger-emphasis);
+  border-color: rgba(31, 35, 40, 0.15);
+  box-shadow: var(--gh-shadow-small);
+}
+
+.gh-btn-danger:hover {
+  background-color: var(--gh-danger-fg);
+}
+
+/* GitHub Panel Styles */
+.gh-panel {
+  background-color: var(--gh-canvas-default);
+  border: 1px solid var(--gh-border-default);
+  border-radius: 6px;
+  box-shadow: var(--gh-shadow-small);
+}
+
+.gh-panel-header {
+  padding: 16px;
+  background-color: var(--gh-canvas-subtle);
+  border-bottom: 1px solid var(--gh-border-default);
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+
+.gh-panel-body {
+  padding: 16px;
+}
+
+/* GitHub Text Styles */
+.gh-text-small {
+  font-size: 12px !important;
+}
+
+.gh-text-normal {
+  font-size: 14px !important;
+}
+
+.gh-text-large {
+  font-size: 16px !important;
+}
+
+.gh-text-muted {
+  color: var(--gh-fg-muted) !important;
+}
+
+.gh-text-bold {
+  font-weight: 600 !important;
+}
+
+/* GitHub Layout Utilities */
+.gh-d-flex {
+  display: flex !important;
+}
+
+.gh-flex-column {
+  flex-direction: column !important;
+}
+
+.gh-flex-row {
+  flex-direction: row !important;
+}
+
+.gh-align-items-center {
+  align-items: center !important;
+}
+
+.gh-justify-content-between {
+  justify-content: space-between !important;
+}
+
+.gh-gap-2 {
+  gap: 8px !important;
+}
+
+.gh-gap-3 {
+  gap: 16px !important;
+}
+
+.gh-p-2 {
+  padding: 8px !important;
+}
+
+.gh-p-3 {
+  padding: 16px !important;
+}
+
+.gh-px-2 {
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+}
+
+.gh-py-2 {
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+}
+
+.gh-m-0 {
+  margin: 0 !important;
+}
+
+.gh-mb-2 {
+  margin-bottom: 8px !important;
+}
+
+.gh-mb-3 {
+  margin-bottom: 16px !important;
+}
+
+/* GitHub Octicon Icon Colors */
+.octicon {
+  color: var(--gh-fg-muted);
+}
+
+.octicon-file-directory-fill {
+  color: #54aeff;
+}
+
+.octicon-file-directory-fill.has-package {
+  color: var(--gh-success-fg);
+}

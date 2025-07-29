@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './FolderTree.css';
+import { FolderIcon, ChevronRightIcon, ChevronDownIcon } from './Icons';
 
 const fs = require('fs');
 const path = require('path');
@@ -66,7 +67,7 @@ function FolderTree({ selectedPath, onSelectPath }: FolderTreeProps) {
     const homeDir = require('os').homedir();
     const initialNodes = [
       {
-        name: '🏠 Home',
+        name: 'Home',
         path: homeDir,
         isExpanded: true,
         hasPackageJson: checkPackageJson(homeDir),
@@ -149,14 +150,18 @@ function FolderTree({ selectedPath, onSelectPath }: FolderTreeProps) {
               }
             }}
           >
-            {nodeHasSubfolders ? (node.isExpanded ? '▼' : '▶') : '  '}
+            {nodeHasSubfolders ? (
+              node.isExpanded ? 
+                <ChevronDownIcon size={12} /> : 
+                <ChevronRightIcon size={12} />
+            ) : null}
           </span>
           <span 
             className="folder-content"
             onClick={() => onSelectPath(node.path)}
           >
             <span className="folder-icon">
-              {node.hasPackageJson ? '📦' : '📁'}
+              <FolderIcon size={16} className={node.hasPackageJson ? 'has-package' : ''} />
             </span>
             <span className="folder-name">
               {node.name}
