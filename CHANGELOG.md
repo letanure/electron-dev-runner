@@ -1,3 +1,13 @@
+## [1.2.1](https://github.com/letanure/electron-dev-runner/compare/v1.2.0...v1.2.1) (2025-07-29)
+
+### 💎 Styles
+
+* update ServerPanel button styles and layout ([5f30e82](https://github.com/letanure/electron-dev-runner/commit/5f30e82b3ed7a8493bc86945dea62cc91a2f93bb))
+
+### 📦 Code Refactoring
+
+* remove unused path cleanup logic from ServerPanel ([03fa051](https://github.com/letanure/electron-dev-runner/commit/03fa051febfc57ec72a4bcb7d57be924ead249d7))
+
 ## [1.2.0](https://github.com/letanure/electron-dev-runner/compare/v1.1.0...v1.2.0) (2025-07-29)
 
 ### 🚀 Features
