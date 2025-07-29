@@ -8,15 +8,45 @@
 }
 
 .header {
-  padding: 0.75rem;
   border-bottom: 1px solid #333;
   background-color: #2a2a2a;
   flex-shrink: 0;
 }
 
+.header-top {
+  padding: 0.75rem;
+  border-bottom: 1px solid #333;
+}
+
 .header h1 {
   margin: 0;
   font-size: 1.1rem;
+}
+
+.breadcrumb {
+  padding: 0.5rem 0.75rem;
+  background-color: #333;
+  font-size: 0.75rem;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.breadcrumb-item {
+  color: #ccc !important;
+  cursor: pointer;
+  padding: 0.2rem 0.3rem;
+  border-radius: 3px;
+  transition: background-color 0.2s;
+}
+
+.breadcrumb-item:hover {
+  background-color: #646cff;
+  color: white !important;
+}
+
+.breadcrumb-separator {
+  color: #666;
+  margin: 0 0.2rem;
 }
 
 .main-content {

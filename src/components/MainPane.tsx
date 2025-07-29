@@ -15,14 +15,22 @@ interface PackageJson {
   scripts?: Record<string, string>;
 }
 
+interface FileItem {
+  name: string;
+  isDirectory: boolean;
+  path: string;
+}
+
 function MainPane({ selectedPath }: MainPaneProps) {
   const [packageJson, setPackageJson] = useState<PackageJson | null>(null);
   const [readmeContent, setReadmeContent] = useState<string | null>(null);
   const [readmeFile, setReadmeFile] = useState<string | null>(null);
+  const [folderContents, setFolderContents] = useState<FileItem[]>([]);
 
   useEffect(() => {
     loadPackageJson();
     loadReadme();
+    loadFolderContents();
   }, [selectedPath]);
 
   const loadPackageJson = () => {
@@ -64,6 +72,28 @@ function MainPane({ selectedPath }: MainPaneProps) {
     }
   };
 
+  const loadFolderContents = () => {
+    try {
+      const files = fs.readdirSync(selectedPath, { withFileTypes: true });
+      const fileItems = files.map((dirent: any) => ({
+        name: dirent.name,
+        isDirectory: dirent.isDirectory(),
+        path: path.join(selectedPath, dirent.name)
+      }));
+      
+      fileItems.sort((a, b) => {
+        if (a.isDirectory && !b.isDirectory) return -1;
+        if (!a.isDirectory && b.isDirectory) return 1;
+        return a.name.localeCompare(b.name);
+      });
+      
+      setFolderContents(fileItems);
+    } catch (error) {
+      console.error('Error reading directory:', error);
+      setFolderContents([]);
+    }
+  };
+
   const runScript = (scriptName: string) => {
     console.log(`Running: npm run ${scriptName} in ${selectedPath}`);
     // TODO: Implement actual script execution
@@ -83,10 +113,6 @@ function MainPane({ selectedPath }: MainPaneProps) {
 
   return (
     <div className="main-pane">
-      <div className="path-header">
-        <span className="current-path">{selectedPath}</span>
-      </div>
-
       {packageJson && (
         <div className="package-section">
           <h3>📦 {packageJson.name || 'Node.js Project'}</h3>
@@ -116,7 +142,7 @@ function MainPane({ selectedPath }: MainPaneProps) {
         </div>
       )}
 
-      {readmeContent && (
+      {readmeContent && (packageJson || !packageJson) && (
         <div className="readme-section">
           <div className="readme-header">
             <h4>📄 {readmeFile}</h4>
@@ -128,9 +154,28 @@ function MainPane({ selectedPath }: MainPaneProps) {
         </div>
       )}
 
-      {!packageJson && !readmeContent && (
+      {!packageJson && !readmeContent && folderContents.length > 0 && (
+        <div className="folder-contents">
+          <h4>📁 Folder Contents</h4>
+          <div className="file-list">
+            {folderContents.map((item) => (
+              <div
+                key={item.path}
+                className={`file-item ${item.isDirectory ? 'directory' : 'file'}`}
+              >
+                <span className="icon">
+                  {item.isDirectory ? '📁' : '📄'}
+                </span>
+                <span className="name">{item.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {!packageJson && !readmeContent && folderContents.length === 0 && (
         <div className="empty-state">
-          <p>📁 Empty folder or no README/package.json found</p>
+          <p>📁 Empty folder</p>
         </div>
       )}
     </div>
