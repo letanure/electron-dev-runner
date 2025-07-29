@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import './MainPane.css';
-import { FolderIcon, FileIcon, PlayIcon, TerminalIcon } from './Icons';
+import { FolderIcon, FileIcon, PlayIcon, TerminalIcon, StopIcon } from './Icons';
 
 const fs = require('node:fs');
 const path = require('node:path');
@@ -663,7 +663,7 @@ function MainPane({ selectedPath, onSelectPath, onViewFile }: MainPaneProps) {
                                 type="button"
                                 title="Stop running process and close window"
                               >
-                                ⏹️
+                                <StopIcon size={12} />
                               </button>
                             )}
                           </div>

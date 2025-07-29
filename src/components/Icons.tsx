@@ -105,3 +105,20 @@ export function TerminalIcon({ className = "", size = 16 }: IconProps) {
     </svg>
   );
 }
+
+export function StopIcon({ className = "", size = 16 }: IconProps) {
+  return (
+    <svg 
+      aria-hidden="true" 
+      focusable="false" 
+      className={`octicon octicon-square-fill ${className}`}
+      viewBox="0 0 16 16" 
+      width={size} 
+      height={size} 
+      fill="currentColor" 
+      style={{ verticalAlign: 'text-bottom' }}
+    >
+      <path d="M2.75 2.5a.25.25 0 0 0-.25.25v10.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25V2.75a.25.25 0 0 0-.25-.25H2.75ZM13.25 1A1.75 1.75 0 0 1 15 2.75v10.5A1.75 1.75 0 0 1 13.25 15H2.75A1.75 1.75 0 0 1 1 13.25V2.75A1.75 1.75 0 0 1 2.75 1h10.5Z"></path>
+    </svg>
+  );
+}
