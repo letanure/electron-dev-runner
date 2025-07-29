@@ -1,0 +1,31 @@
+## 1.0.0 (2025-07-29)
+
+### 🚀 Features
+
+* add breadcrumb component ([1b03913](https://github.com/letanure/electron-dev-runner/commit/1b039135cf29908641d15254bf77cdd045e5f24a))
+* add dependency installation check and UI warning ([d23acf1](https://github.com/letanure/electron-dev-runner/commit/d23acf186d99692ab1373d5a32780ace4983305f))
+* add electron main process ([d9f11cd](https://github.com/letanure/electron-dev-runner/commit/d9f11cd59dbaf40ccd7979c13ae21d475e38df85))
+* add file viewer and ([275343c](https://github.com/letanure/electron-dev-runner/commit/275343cb98eb522bff440b8e23e95264a16ee504))
+* add GitHub Actions workflow for automated releases and update release instructions ([9fd0ce9](https://github.com/letanure/electron-dev-runner/commit/9fd0ce9b4c3043e77201cd07fb02e858a29ff745))
+* add image and PDF viewi ([6c4fe0d](https://github.com/letanure/electron-dev-runner/commit/6c4fe0d67b9e2f124d69e01d941e33a75e85e1cb))
+* add Play and Terminal icon ([e2646c8](https://github.com/letanure/electron-dev-runner/commit/e2646c808a2940b442ea3c42147e6553a4b81174))
+* add simple file list and nav ([e185653](https://github.com/letanure/electron-dev-runner/commit/e185653ad637f110bb3d412d5460854621983045))
+* add start stop ([9af0183](https://github.com/letanure/electron-dev-runner/commit/9af01838a46ac3563ba34deaeadfc7fa7497142b))
+* add StopIcon ([dc0032a](https://github.com/letanure/electron-dev-runner/commit/dc0032a539cc766fe003f0c9b74e2c2a8bfb4b72))
+* addgithub-ish style ([f233ce3](https://github.com/letanure/electron-dev-runner/commit/f233ce3861323a76b9bddb35af3c924015c03c11))
+* better color on folder ([47623d3](https://github.com/letanure/electron-dev-runner/commit/47623d3833d62e147cdd29adc222072c1477c6db))
+* detect close window ([ede36ed](https://github.com/letanure/electron-dev-runner/commit/ede36ed22c7da5d04e78a0041a48cebef76f30b0))
+* enable npm publishing ([f184564](https://github.com/letanure/electron-dev-runner/commit/f1845640aa574023e10ccc37c46186b3b68de152))
+* enhance folder tree ([f93b566](https://github.com/letanure/electron-dev-runner/commit/f93b566036ec9c691d4188d3efd93df514c22429))
+* implement folder tree ([6077a56](https://github.com/letanure/electron-dev-runner/commit/6077a56986364a59777088b62d17c7de9ee3de90))
+* implement process management ([ce95d78](https://github.com/letanure/electron-dev-runner/commit/ce95d786ebf3b1cae3deee67cb82a3f75cd2779e))
+* update package configuration for public ([3006b18](https://github.com/letanure/electron-dev-runner/commit/3006b18dd3ffa00f5bb9c0d57838d3bf2e227266))
+* update permissions and fix token usage in release workflow ([b78e3ff](https://github.com/letanure/electron-dev-runner/commit/b78e3fff61abbb4f2aae2cabc660759997bd942e))
+
+### 🐛 Bug Fixes
+
+* update app name and description in README ([ec0d09f](https://github.com/letanure/electron-dev-runner/commit/ec0d09fc857669b9924847990789be44fb7099e9))
+
+### 📦 Code Refactoring
+
+* Clean up process handling ([fae1ca2](https://github.com/letanure/electron-dev-runner/commit/fae1ca214ce8327b82befc6f627d1cf5bc72bbbe))
