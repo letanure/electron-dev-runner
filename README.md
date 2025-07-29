@@ -25,11 +25,16 @@ Download the latest release for your platform:
 - **Windows**: Coming soon
 - **Linux**: Coming soon
 
-### Install via npm
+### Install via npm (Global CLI)
 
 ```bash
 npm install -g electron-dev-runner
+
+# Then run anywhere:
+electron-dev-runner
 ```
+
+**Note**: The npm package includes the full Electron runtime (~100MB download). For smaller downloads, use the platform-specific installers above.
 
 ## Usage
 

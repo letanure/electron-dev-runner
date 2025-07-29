@@ -50,7 +50,7 @@ module.exports = {
     [
       "@semantic-release/npm",
       {
-        npmPublish: false, // Don't publish to npm for Electron app
+        npmPublish: true, // Publish as CLI tool
       },
     ],
     [
