@@ -1,3 +1,13 @@
+## [1.1.0](https://github.com/letanure/electron-dev-runner/compare/v1.0.10...v1.1.0) (2025-07-29)
+
+### 🚀 Features
+
+* implement IPC handlers ([da8bce6](https://github.com/letanure/electron-dev-runner/commit/da8bce669391328507697cf3a906b71d46fcdb82))
+
+### 🐛 Bug Fixes
+
+* enable web security in main ([889d575](https://github.com/letanure/electron-dev-runner/commit/889d575d6ec636c77344feeb952c1049ea5492a6))
+
 ## [1.0.10](https://github.com/letanure/electron-dev-runner/compare/v1.0.9...v1.0.10) (2025-07-29)
 
 ### 🐛 Bug Fixes
