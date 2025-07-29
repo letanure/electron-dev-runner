@@ -15,7 +15,7 @@
 }
 
 .breadcrumb-item {
-  color: #ccc;
+  color: #ccc !important;
   cursor: pointer;
   padding: 0.2rem 0.3rem;
   border-radius: 3px;
@@ -24,7 +24,7 @@
 
 .breadcrumb-item:hover {
   background-color: #646cff;
-  color: white;
+  color: white !important;
 }
 
 .breadcrumb-separator {
@@ -74,6 +74,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: #ffffff;
 }
 
 .folder-name.has-package {

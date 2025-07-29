@@ -28,6 +28,15 @@ function FolderTree({ selectedPath, onSelectPath }: FolderTreeProps) {
     }
   };
 
+  const hasSubfolders = (nodePath: string): boolean => {
+    try {
+      const items = fs.readdirSync(nodePath, { withFileTypes: true });
+      return items.some((item: any) => item.isDirectory() && !item.name.startsWith('.'));
+    } catch {
+      return false;
+    }
+  };
+
   const loadChildren = (nodePath: string): TreeNode[] => {
     try {
       const items = fs.readdirSync(nodePath, { withFileTypes: true });
@@ -84,6 +93,7 @@ function FolderTree({ selectedPath, onSelectPath }: FolderTreeProps) {
           return {
             ...node,
             isExpanded: true,
+            hasPackageJson: checkPackageJson(node.path), // Refresh package.json status
             children: node.children.length > 0 ? 
               updateNodesRecursively(node.children, node.path) : 
               loadChildren(node.path)
@@ -122,6 +132,7 @@ function FolderTree({ selectedPath, onSelectPath }: FolderTreeProps) {
 
   const renderNode = (node: TreeNode, depth: number = 0) => {
     const isSelected = node.path === selectedPath;
+    const nodeHasSubfolders = hasSubfolders(node.path);
     
     return (
       <div key={node.path}>
@@ -134,10 +145,12 @@ function FolderTree({ selectedPath, onSelectPath }: FolderTreeProps) {
             className="expand-icon"
             onClick={(e) => {
               e.stopPropagation();
-              toggleExpand(node.path);
+              if (nodeHasSubfolders) {
+                toggleExpand(node.path);
+              }
             }}
           >
-            {node.isExpanded ? '▼' : '▶'}
+            {nodeHasSubfolders ? (node.isExpanded ? '▼' : '▶') : '  '}
           </span>
           <span className="folder-icon">
             {node.hasPackageJson ? '📦' : '📁'}
