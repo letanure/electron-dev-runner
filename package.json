@@ -53,7 +53,7 @@
   },
   "build": {
     "appId": "com.letanure.electron-dev-runner",
-    "productName": "Dev Runner",
+    "productName": "Electron Dev Runner",
     "directories": {
       "output": "release"
     },
@@ -65,13 +65,33 @@
     ],
     "mac": {
       "category": "public.app-category.developer-tools",
-      "target": "dmg"
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64", "arm64"]
+        }
+      ]
     },
     "win": {
-      "target": "nsis"
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ]
     },
     "linux": {
-      "target": "AppImage"
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "letanure",
+      "repo": "electron-dev-runner"
     }
   }
 }
