@@ -45,7 +45,6 @@ jobs:
 
   build:
     needs: release
-    if: needs.release.outputs.new-release-published == 'true'
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -56,7 +55,7 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v4
         with:
-          ref: v${{ needs.release.outputs.new-release-version }}
+          fetch-depth: 0
 
       - name: Install Node.js
         uses: actions/setup-node@v4
@@ -78,10 +77,15 @@ jobs:
           release: false
           build_script_name: build
 
+      - name: Get latest tag
+        id: tag
+        run: echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+
       - name: Upload release assets
+        if: startsWith(steps.tag.outputs.tag, 'v')
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v${{ needs.release.outputs.new-release-version }}
+          tag_name: ${{ steps.tag.outputs.tag }}
           files: |
             release/*.dmg
             release/*.exe
