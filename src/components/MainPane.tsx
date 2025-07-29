@@ -29,6 +29,7 @@ interface ProcessInfo {
   status: 'starting' | 'running' | 'error';
 }
 
+
 interface MainPaneProps {
   selectedPath: string;
   onSelectPath: (path: string) => void;
@@ -70,6 +71,7 @@ function MainPane({ selectedPath, onSelectPath, onViewFile, globalProcesses, onP
     const processKey = createProcessKey(scriptName);
     return globalProcesses.has(processKey);
   };
+
 
   const loadPackageJson = () => {
     try {
@@ -841,6 +843,7 @@ function MainPane({ selectedPath, onSelectPath, onViewFile, globalProcesses, onP
           )}
         </div>
       )}
+
 
       {readmeContent && (packageJson || !packageJson) && (
         <div className="readme-section">

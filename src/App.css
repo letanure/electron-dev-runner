@@ -98,6 +98,18 @@
   min-width: 0;
 }
 
+.server-panel-container {
+  width: 360px;
+  background-color: var(--gh-canvas-default);
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.panel-toggle {
+  font-size: 14px;
+  padding: 4px 8px;
+}
+
 .process-panel-container {
   width: 300px;
   background-color: var(--gh-canvas-default);

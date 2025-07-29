@@ -2,7 +2,7 @@ import { useState } from 'react'
 import './App.css'
 import FolderTree from './components/FolderTree'
 import MainPane from './components/MainPane'
-// import ProcessPanel from './components/ProcessPanel'
+import ServerPanel from './components/ServerPanel'
 import Breadcrumb from './components/Breadcrumb'
 import ThemeToggle from './components/ThemeToggle'
 import { ThemeProvider } from './contexts/ThemeContext'
@@ -20,7 +20,7 @@ function App() {
   const [selectedPath, setSelectedPath] = useState(process.cwd());
   const [viewingFile, setViewingFile] = useState<string | null>(null);
   const [globalProcesses, setGlobalProcesses] = useState<Map<string, ProcessInfo>>(new Map());
-  // const [showProcessPanel, setShowProcessPanel] = useState(false);
+  const [showServerPanel, setShowServerPanel] = useState(true);
 
   // Handle process updates and panel visibility
   const handleProcessUpdate = (processes: Map<string, ProcessInfo>) => {
@@ -37,10 +37,10 @@ function App() {
     // }
   };
 
-  // Toggle process panel visibility
-  // const toggleProcessPanel = () => {
-  //   setShowProcessPanel(!showProcessPanel);
-  // };
+  // Toggle server panel visibility
+  const toggleServerPanel = () => {
+    setShowServerPanel(!showServerPanel);
+  };
 
   // Stop a process from the process panel
   // const handleStopProcess = (processKey: string) => {
@@ -117,16 +117,13 @@ function App() {
           <div className="header-top">
             <h1>Dev Runner</h1>
             <div className="header-actions">
-              {/* Temporarily hidden for release */}
-              {/* {globalProcesses.size > 0 && (
-                <button 
-                  className="process-indicator"
-                  onClick={toggleProcessPanel}
-                  title={`${globalProcesses.size} processes running - click to ${showProcessPanel ? 'hide' : 'show'}`}
-                >
-                  {globalProcesses.size}
-                </button>
-              )} */}
+              <button 
+                className="panel-toggle gh-btn gh-btn-secondary"
+                onClick={toggleServerPanel}
+                title={`${showServerPanel ? 'Hide' : 'Show'} server panel`}
+              >
+                🌐
+              </button>
               <ThemeToggle />
             </div>
           </div>
@@ -156,16 +153,11 @@ function App() {
             />
           </main>
 
-          {/* Temporarily hidden for release */}
-          {/* {showProcessPanel && (
-            <aside className="process-panel-container">
-              <ProcessPanel 
-                runningProcesses={globalProcesses}
-                onStopProcess={handleStopProcess}
-                onOpenWindow={handleOpenWindow}
-              />
+          {showServerPanel && (
+            <aside className="server-panel-container">
+              <ServerPanel selectedPath={selectedPath} />
             </aside>
-          )} */}
+          )}
         </div>
       </div>
     </ThemeProvider>
