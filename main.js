@@ -1,6 +1,8 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
 
+require('@electron/remote/main').initialize();
+
 function createWindow() {
   const mainWindow = new BrowserWindow({
     width: 1200,
@@ -8,8 +10,11 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
+      enableRemoteModule: true,
     }
   });
+
+  require('@electron/remote/main').enable(mainWindow.webContents);
 
   const isDev = process.env.NODE_ENV === 'development';
   

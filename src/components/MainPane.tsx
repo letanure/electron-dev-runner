@@ -3,6 +3,7 @@ import './MainPane.css';
 
 const fs = require('fs');
 const path = require('path');
+const { spawn } = require('child_process');
 
 interface MainPaneProps {
   selectedPath: string;
@@ -26,6 +27,7 @@ function MainPane({ selectedPath }: MainPaneProps) {
   const [readmeContent, setReadmeContent] = useState<string | null>(null);
   const [readmeFile, setReadmeFile] = useState<string | null>(null);
   const [folderContents, setFolderContents] = useState<FileItem[]>([]);
+  const [runningProcesses, setRunningProcesses] = useState<Map<string, any>>(new Map());
 
   useEffect(() => {
     loadPackageJson();
@@ -94,9 +96,144 @@ function MainPane({ selectedPath }: MainPaneProps) {
     }
   };
 
-  const runScript = (scriptName: string) => {
-    console.log(`Running: npm run ${scriptName} in ${selectedPath}`);
-    // TODO: Implement actual script execution
+  const isDevScript = (scriptName: string, command: string): boolean => {
+    const devKeywords = ['dev', 'start', 'serve', 'preview', 'develop'];
+    return devKeywords.some(keyword => 
+      scriptName.toLowerCase().includes(keyword) || 
+      command.toLowerCase().includes(keyword)
+    );
+  };
+
+  const detectPortFromOutput = (output: string): number | null => {
+    // Common patterns for dev server URLs
+    const patterns = [
+      /localhost:(\d+)/,
+      /127\.0\.0\.1:(\d+)/,
+      /Local:\s+http:\/\/[^:]+:(\d+)/,
+      /running at.*:(\d+)/i,
+      /server running on.*:(\d+)/i
+    ];
+
+    for (const pattern of patterns) {
+      const match = output.match(pattern);
+      if (match) {
+        return parseInt(match[1]);
+      }
+    }
+    return null;
+  };
+
+  const openElectronWindow = (url: string, projectName: string) => {
+    try {
+      const { BrowserWindow } = require('@electron/remote') || require('electron').remote;
+      if (!BrowserWindow) {
+        console.error('Could not access BrowserWindow');
+        return;
+      }
+
+      const devWindow = new BrowserWindow({
+        width: 1200,
+        height: 800,
+        title: `${projectName} - Dev Runner`,
+        webPreferences: {
+          nodeIntegration: false,
+          contextIsolation: true,
+        }
+      });
+
+      devWindow.loadURL(url);
+      devWindow.webContents.openDevTools();
+    } catch (error) {
+      console.error('Error creating Electron window:', error);
+    }
+  };
+
+  const stopScript = (scriptName: string) => {
+    const process = runningProcesses.get(scriptName);
+    if (process) {
+      console.log(`Stopping: ${scriptName}`);
+      process.kill('SIGTERM');
+      
+      // If SIGTERM doesn't work, force kill after 5 seconds
+      setTimeout(() => {
+        if (runningProcesses.has(scriptName)) {
+          console.log(`Force killing: ${scriptName}`);
+          process.kill('SIGKILL');
+        }
+      }, 5000);
+    }
+  };
+
+  const runScript = async (scriptName: string) => {
+    if (runningProcesses.has(scriptName)) {
+      console.log(`${scriptName} is already running`);
+      return;
+    }
+
+    const projectName = packageJson?.name || path.basename(selectedPath);
+    console.log(`Starting: npm run ${scriptName} in ${projectName}`);
+
+    const process = spawn('npm', ['run', scriptName], {
+      cwd: selectedPath,
+      stdio: 'pipe'
+    });
+
+    setRunningProcesses(prev => new Map(prev.set(scriptName, process)));
+
+    let portDetected = false;
+
+    process.stdout.on('data', (data: Buffer) => {
+      const output = data.toString();
+      console.log(`[${scriptName}]:`, output);
+
+      if (!portDetected) {
+        const port = detectPortFromOutput(output);
+        if (port) {
+          portDetected = true;
+          const url = `http://localhost:${port}`;
+          console.log(`Dev server detected at ${url}`);
+          
+          // Wait a bit for server to be fully ready
+          setTimeout(() => {
+            openElectronWindow(url, projectName);
+          }, 2000);
+        }
+      }
+    });
+
+    process.stderr.on('data', (data: Buffer) => {
+      const output = data.toString();
+      console.error(`[${scriptName} ERROR]:`, output);
+      
+      if (!portDetected) {
+        const port = detectPortFromOutput(output);
+        if (port) {
+          portDetected = true;
+          const url = `http://localhost:${port}`;
+          setTimeout(() => {
+            openElectronWindow(url, projectName);
+          }, 2000);
+        }
+      }
+    });
+
+    process.on('close', (code: number) => {
+      console.log(`${scriptName} process exited with code ${code}`);
+      setRunningProcesses(prev => {
+        const newMap = new Map(prev);
+        newMap.delete(scriptName);
+        return newMap;
+      });
+    });
+
+    process.on('error', (error: Error) => {
+      console.error(`Failed to start ${scriptName}:`, error);
+      setRunningProcesses(prev => {
+        const newMap = new Map(prev);
+        newMap.delete(scriptName);
+        return newMap;
+      });
+    });
   };
 
   const formatReadmeContent = (content: string) => {
@@ -123,20 +260,43 @@ function MainPane({ selectedPath }: MainPaneProps) {
           
           {packageJson.scripts && (
             <div className="scripts">
-              <h4>Available Scripts:</h4>
+              <h4>Development Scripts:</h4>
               <div className="script-buttons">
-                {Object.entries(packageJson.scripts).map(([name, command]) => (
-                  <div key={name} className="script-item">
-                    <button 
-                      className="script-button"
-                      onClick={() => runScript(name)}
-                    >
-                      ▶️ {name}
-                    </button>
-                    <span className="script-command">{command}</span>
-                  </div>
-                ))}
+                {Object.entries(packageJson.scripts)
+                  .filter(([name, command]) => isDevScript(name, command))
+                  .map(([name, command]) => {
+                    const isRunning = runningProcesses.has(name);
+                    return (
+                      <div key={name} className="script-item">
+                        <div className="script-controls">
+                          <button 
+                            className={`script-button ${isRunning ? 'running' : ''}`}
+                            onClick={() => runScript(name)}
+                            disabled={isRunning}
+                            type="button"
+                          >
+                            {isRunning ? '🔄' : '▶️'} {name}
+                          </button>
+                          {isRunning && (
+                            <button 
+                              className="stop-button"
+                              onClick={() => stopScript(name)}
+                              type="button"
+                              title="Stop process"
+                            >
+                              ⏹️
+                            </button>
+                          )}
+                        </div>
+                        <span className="script-command">{command}</span>
+                        {isRunning && <span className="running-indicator">Running...</span>}
+                      </div>
+                    );
+                  })}
               </div>
+              {Object.entries(packageJson.scripts).filter(([name, command]) => isDevScript(name, command)).length === 0 && (
+                <p className="no-dev-scripts">No development scripts found</p>
+              )}
             </div>
           )}
         </div>

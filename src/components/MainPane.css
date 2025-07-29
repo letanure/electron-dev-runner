@@ -57,6 +57,12 @@
   gap: 0.75rem;
 }
 
+.script-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
 .script-button {
   padding: 0.25rem 0.5rem;
   background-color: #646cff;
@@ -72,6 +78,48 @@
 
 .script-button:hover {
   background-color: #535bf2;
+}
+
+.script-button.running {
+  background-color: #34C759;
+  cursor: not-allowed;
+}
+
+.script-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.running-indicator {
+  color: #34C759;
+  font-size: 0.6rem;
+  font-weight: 500;
+}
+
+.stop-button {
+  padding: 0.25rem 0.4rem;
+  background-color: #ff4757;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.7rem;
+  min-width: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.stop-button:hover {
+  background-color: #ff3742;
+}
+
+.no-dev-scripts {
+  color: #666;
+  font-size: 0.75rem;
+  font-style: italic;
+  margin: 0;
 }
 
 .script-command {
