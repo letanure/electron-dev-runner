@@ -6,11 +6,6 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { spawn } = require('node:child_process');
 
-interface MainPaneProps {
-  selectedPath: string;
-  onSelectPath: (path: string) => void;
-  onViewFile?: (filePath: string | null) => void;
-}
 
 interface PackageJson {
   name?: string;
@@ -25,13 +20,28 @@ interface FileItem {
   path: string;
 }
 
-function MainPane({ selectedPath, onSelectPath, onViewFile }: MainPaneProps) {
+interface ProcessInfo {
+  process: any;
+  window?: any;
+  projectPath: string;
+  scriptName: string;
+  port?: number;
+  status: 'starting' | 'running' | 'error';
+}
+
+interface MainPaneProps {
+  selectedPath: string;
+  onSelectPath: (path: string) => void;
+  onViewFile?: (filePath: string | null) => void;
+  globalProcesses: Map<string, ProcessInfo>;
+  onProcessUpdate: (processes: Map<string, ProcessInfo>) => void;
+}
+
+function MainPane({ selectedPath, onSelectPath, onViewFile, globalProcesses, onProcessUpdate }: MainPaneProps) {
   const [packageJson, setPackageJson] = useState<PackageJson | null>(null);
   const [readmeContent, setReadmeContent] = useState<string | null>(null);
   const [readmeFile, setReadmeFile] = useState<string | null>(null);
   const [folderContents, setFolderContents] = useState<FileItem[]>([]);
-  const [runningProcesses, setRunningProcesses] = useState<Map<string, any>>(new Map());
-  const [openWindows, setOpenWindows] = useState<Map<string, any>>(new Map());
   const [needsInstall, setNeedsInstall] = useState(false);
   const [isInstalling, setIsInstalling] = useState(false);
   const [viewingFile, setViewingFile] = useState<string | null>(null);
@@ -46,6 +56,17 @@ function MainPane({ selectedPath, onSelectPath, onViewFile }: MainPaneProps) {
     setFileContent(null);
     onViewFile?.(null);
   }, [selectedPath]);
+
+  // Helper function to create unique process keys
+  const createProcessKey = (scriptName: string, projectPath: string = selectedPath): string => {
+    return `${projectPath}:${scriptName}`;
+  };
+
+  // Check if a script is running in the current folder
+  const isScriptRunning = (scriptName: string): boolean => {
+    const processKey = createProcessKey(scriptName);
+    return globalProcesses.has(processKey);
+  };
 
   const loadPackageJson = () => {
     try {
@@ -197,7 +218,7 @@ function MainPane({ selectedPath, onSelectPath, onViewFile }: MainPaneProps) {
     return null;
   };
 
-  const openElectronWindow = (url: string, projectName: string, scriptName: string) => {
+  const openElectronWindow = (url: string, projectName: string, processKey: string) => {
     try {
       const { BrowserWindow } = require('@electron/remote') || require('electron').remote;
       if (!BrowserWindow) {
@@ -215,22 +236,30 @@ function MainPane({ selectedPath, onSelectPath, onViewFile }: MainPaneProps) {
         }
       });
 
-      // Store the window reference
-      setOpenWindows(prev => new Map(prev.set(scriptName, devWindow)));
+      // Store the window reference in global processes
+      const currentProcesses = new Map(globalProcesses);
+      const processInfo = currentProcesses.get(processKey);
+      if (processInfo) {
+        processInfo.window = devWindow;
+        currentProcesses.set(processKey, processInfo);
+        onProcessUpdate(currentProcesses);
+      }
 
       // Listen for window close event
       devWindow.on('closed', () => {
-        console.log(`Dev window closed for ${scriptName}, stopping process...`);
+        console.log(`Dev window closed for ${processKey}, stopping process...`);
         
-        // Remove window from state
-        setOpenWindows(prev => {
-          const newMap = new Map(prev);
-          newMap.delete(scriptName);
-          return newMap;
-        });
+        // Remove window reference from process info
+        const updatedProcesses = new Map(globalProcesses);
+        const currentInfo = updatedProcesses.get(processKey);
+        if (currentInfo) {
+          delete currentInfo.window;
+          updatedProcesses.set(processKey, currentInfo);
+          onProcessUpdate(updatedProcesses);
+        }
 
         // Stop the associated process
-        stopScript(scriptName);
+        stopScript(processKey);
       });
 
       devWindow.loadURL(url);
@@ -240,33 +269,67 @@ function MainPane({ selectedPath, onSelectPath, onViewFile }: MainPaneProps) {
     }
   };
 
-  const stopScript = (scriptName: string) => {
-    const process = runningProcesses.get(scriptName);
-    const window = openWindows.get(scriptName);
+  const stopScript = (processKeyOrScriptName: string) => {
+    // Handle both old format (scriptName) and new format (processKey)
+    const processKey = processKeyOrScriptName.includes(':') 
+      ? processKeyOrScriptName 
+      : createProcessKey(processKeyOrScriptName);
     
-    if (process) {
-      console.log(`Stopping: ${scriptName}`);
-      process.kill('SIGTERM');
-      
-      // If SIGTERM doesn't work, force kill after 5 seconds
-      setTimeout(() => {
-        if (runningProcesses.has(scriptName)) {
-          console.log(`Force killing: ${scriptName}`);
-          process.kill('SIGKILL');
+    const processInfo = globalProcesses.get(processKey);
+    
+    if (!processInfo?.process) {
+      console.log(`No process found for ${processKey}`);
+      // If no process found, just remove from UI
+      const currentProcesses = new Map(globalProcesses);
+      currentProcesses.delete(processKey);
+      onProcessUpdate(currentProcesses);
+      return;
+    }
+
+    console.log(`Stopping: ${processKey}`);
+    
+    // Close the associated window first
+    if (processInfo.window && !processInfo.window.isDestroyed()) {
+      try {
+        processInfo.window.close();
+      } catch (error) {
+        console.error(`Error closing window for ${processKey}:`, error);
+      }
+    }
+
+    // Send SIGTERM
+    try {
+      processInfo.process.kill('SIGTERM');
+    } catch (error) {
+      console.error(`Error sending SIGTERM to ${processKey}:`, error);
+      // If we can't send SIGTERM, remove from UI immediately
+      const currentProcesses = new Map(globalProcesses);
+      currentProcesses.delete(processKey);
+      onProcessUpdate(currentProcesses);
+      return;
+    }
+    
+    // Set up force kill after 5 seconds if process doesn't exit
+    const forceKillTimeout = setTimeout(() => {
+      const currentProcesses = new Map(globalProcesses);
+      if (currentProcesses.has(processKey)) {
+        console.log(`Force killing: ${processKey}`);
+        try {
+          processInfo.process.kill('SIGKILL');
+        } catch (error) {
+          console.error(`Error force killing ${processKey}:`, error);
+          // If SIGKILL also fails, force remove from UI
+          const finalProcesses = new Map(globalProcesses);
+          finalProcesses.delete(processKey);
+          onProcessUpdate(finalProcesses);
         }
-      }, 5000);
-    }
+      }
+    }, 5000);
 
-    // Close the associated window if it exists
-    if (window && !window.isDestroyed()) {
-      window.close();
-    }
-
-    // Clean up window state
-    setOpenWindows(prev => {
-      const newMap = new Map(prev);
-      newMap.delete(scriptName);
-      return newMap;
+    // Clean up timeout if process exits gracefully 
+    // The 'close' event will handle UI cleanup
+    processInfo.process.once('close', () => {
+      clearTimeout(forceKillTimeout);
     });
   };
 
@@ -351,8 +414,10 @@ function MainPane({ selectedPath, onSelectPath, onViewFile }: MainPaneProps) {
   };
 
   const runScript = async (scriptName: string) => {
-    if (runningProcesses.has(scriptName)) {
-      console.log(`${scriptName} is already running`);
+    const processKey = createProcessKey(scriptName);
+    
+    if (globalProcesses.has(processKey)) {
+      console.log(`${scriptName} is already running in ${selectedPath}`);
       return;
     }
 
@@ -364,12 +429,31 @@ function MainPane({ selectedPath, onSelectPath, onViewFile }: MainPaneProps) {
       stdio: 'pipe'
     });
 
+    // Create process info object
+    const processInfo: ProcessInfo = {
+      process,
+      projectPath: selectedPath,
+      scriptName,
+      status: 'starting'
+    };
+
+    // Add to global processes
+    const newProcesses = new Map(globalProcesses);
+    newProcesses.set(processKey, processInfo);
+    onProcessUpdate(newProcesses);
+
     // Check if process started successfully
     process.on('spawn', () => {
       console.log(`${scriptName}: Process spawned successfully`);
+      // Update status to running
+      const updatedProcesses = new Map(newProcesses);
+      const currentInfo = updatedProcesses.get(processKey);
+      if (currentInfo) {
+        currentInfo.status = 'running';
+        updatedProcesses.set(processKey, currentInfo);
+        onProcessUpdate(updatedProcesses);
+      }
     });
-
-    setRunningProcesses(prev => new Map(prev.set(scriptName, process)));
 
     let portDetected = false;
 
@@ -384,9 +468,18 @@ function MainPane({ selectedPath, onSelectPath, onViewFile }: MainPaneProps) {
           const url = `http://localhost:${port}`;
           console.log(`Dev server detected at ${url}`);
           
+          // Update process info with port
+          const currentProcesses = new Map(globalProcesses);
+          const currentInfo = currentProcesses.get(processKey);
+          if (currentInfo) {
+            currentInfo.port = port;
+            currentProcesses.set(processKey, currentInfo);
+            onProcessUpdate(currentProcesses);
+          }
+          
           // Wait a bit for server to be fully ready
           setTimeout(() => {
-            openElectronWindow(url, projectName, scriptName);
+            openElectronWindow(url, projectName, processKey);
           }, 2000);
         }
       }
@@ -406,8 +499,18 @@ function MainPane({ selectedPath, onSelectPath, onViewFile }: MainPaneProps) {
         if (port) {
           portDetected = true;
           const url = `http://localhost:${port}`;
+          
+          // Update process info with port
+          const currentProcesses = new Map(globalProcesses);
+          const currentInfo = currentProcesses.get(processKey);
+          if (currentInfo) {
+            currentInfo.port = port;
+            currentProcesses.set(processKey, currentInfo);
+            onProcessUpdate(currentProcesses);
+          }
+          
           setTimeout(() => {
-            openElectronWindow(url, projectName, scriptName);
+            openElectronWindow(url, projectName, processKey);
           }, 2000);
         }
       }
@@ -418,25 +521,29 @@ function MainPane({ selectedPath, onSelectPath, onViewFile }: MainPaneProps) {
       if (code !== 0) {
         console.error(`${scriptName} failed with exit code ${code}`);
       }
-      setRunningProcesses(prev => {
-        const newMap = new Map(prev);
-        newMap.delete(scriptName);
-        return newMap;
-      });
+      
+      // Remove from global processes
+      const currentProcesses = new Map(globalProcesses);
+      currentProcesses.delete(processKey);
+      onProcessUpdate(currentProcesses);
     });
 
     process.on('error', (error: Error) => {
       console.error(`Failed to start ${scriptName}:`, error);
-      setRunningProcesses(prev => {
-        const newMap = new Map(prev);
-        newMap.delete(scriptName);
-        return newMap;
-      });
+      
+      // Update process status to error
+      const currentProcesses = new Map(globalProcesses);
+      const currentInfo = currentProcesses.get(processKey);
+      if (currentInfo) {
+        currentInfo.status = 'error';
+        currentProcesses.set(processKey, currentInfo);
+        onProcessUpdate(currentProcesses);
+      }
     });
 
     // Add timeout to prevent stuck processes
     const timeout = setTimeout(() => {
-      if (runningProcesses.has(scriptName) && !portDetected) {
+      if (globalProcesses.has(processKey) && !portDetected) {
         console.log(`${scriptName}: No port detected after 30 seconds, but keeping process running`);
       }
     }, 30000);
@@ -631,7 +738,7 @@ function MainPane({ selectedPath, onSelectPath, onViewFile }: MainPaneProps) {
                 {Object.entries(packageJson.scripts)
                   .filter(([name, command]) => isDevScript(name, command))
                   .map(([name, command]) => {
-                    const isRunning = runningProcesses.has(name);
+                    const isRunning = isScriptRunning(name);
                     return (
                       <div key={name} className="script-item">
                         <div className="script-single-line">

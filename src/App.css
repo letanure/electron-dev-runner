@@ -22,6 +22,12 @@
   justify-content: space-between;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .header h1 {
   margin: 0;
   font-size: 16px;
@@ -89,4 +95,73 @@
   flex: 1;
   background-color: var(--gh-canvas-default);
   overflow-y: auto;
+  min-width: 0;
+}
+
+.process-panel-container {
+  width: 300px;
+  background-color: var(--gh-canvas-default);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+/* Process Indicator Button */
+.process-indicator {
+  background-color: var(--gh-accent-emphasis);
+  color: var(--gh-fg-on-emphasis);
+  border: 1px solid var(--gh-accent-muted);
+  border-radius: 12px;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--gh-shadow-small);
+}
+
+.process-indicator:hover {
+  background-color: var(--gh-accent-fg);
+  transform: translateY(-1px);
+  box-shadow: var(--gh-shadow-medium);
+}
+
+/* Three-panel layout adjustments */
+.main-content.has-process-panel {
+  grid-template-columns: 280px 1fr 300px;
+}
+
+/* Responsive behavior */
+@media (max-width: 1200px) {
+  .process-panel-container {
+    width: 250px;
+  }
+  
+  .sidebar {
+    width: 240px;
+  }
+}
+
+@media (max-width: 900px) {
+  .main-content {
+    flex-direction: column;
+  }
+  
+  .process-panel-container {
+    width: 100%;
+    height: 200px;
+    border-left: none;
+    border-top: 1px solid var(--gh-border-default);
+  }
+  
+  .sidebar {
+    width: 100%;
+    height: 200px;
+    border-right: none;
+    border-bottom: 1px solid var(--gh-border-default);
+  }
 }

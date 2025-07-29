@@ -1,0 +1,181 @@
+.process-panel {
+  background-color: var(--gh-canvas-default);
+  border-left: 1px solid var(--gh-border-default);
+  height: 100%;
+  overflow-y: auto;
+  width: 300px;
+  flex-shrink: 0;
+}
+
+.process-panel-header {
+  padding: 16px;
+  background-color: var(--gh-canvas-subtle);
+  border-bottom: 1px solid var(--gh-border-default);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.process-panel-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gh-fg-default);
+}
+
+.process-count {
+  background-color: var(--gh-accent-emphasis);
+  color: var(--gh-fg-on-emphasis);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  min-width: 20px;
+  text-align: center;
+}
+
+.process-list {
+  padding: 0;
+}
+
+.process-item {
+  padding: 16px;
+  border-bottom: 1px solid var(--gh-border-muted);
+  transition: background-color 0.15s ease;
+}
+
+.process-item:hover {
+  background-color: var(--gh-canvas-subtle);
+}
+
+.process-item:last-child {
+  border-bottom: none;
+}
+
+.process-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.process-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.process-folder-icon {
+  color: var(--gh-accent-fg);
+  flex-shrink: 0;
+}
+
+.process-project {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gh-fg-default);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.process-script {
+  font-size: 12px;
+  color: var(--gh-fg-muted);
+  background-color: var(--gh-neutral-muted);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+}
+
+.process-status {
+  flex-shrink: 0;
+}
+
+.status-indicator {
+  font-size: 12px;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-indicator.starting {
+  opacity: 0.7;
+}
+
+.status-indicator.running {
+  opacity: 1;
+}
+
+.status-indicator.error {
+  opacity: 1;
+}
+
+.process-url {
+  margin-bottom: 8px;
+}
+
+.url-text {
+  font-size: 11px;
+  color: var(--gh-accent-fg);
+  background-color: var(--gh-accent-subtle);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+  border: 1px solid var(--gh-accent-muted);
+}
+
+.process-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.process-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  border: 1px solid var(--gh-border-default);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  background-color: var(--gh-canvas-default);
+  color: var(--gh-fg-default);
+}
+
+.process-action-btn:hover {
+  background-color: var(--gh-canvas-subtle);
+}
+
+.open-btn {
+  border-color: var(--gh-accent-muted);
+  color: var(--gh-accent-fg);
+}
+
+.open-btn:hover {
+  background-color: var(--gh-accent-subtle);
+  border-color: var(--gh-accent-emphasis);
+}
+
+.stop-btn {
+  border-color: var(--gh-danger-muted);
+  color: var(--gh-danger-fg);
+}
+
+.stop-btn:hover {
+  background-color: var(--gh-danger-subtle);
+  border-color: var(--gh-danger-emphasis);
+}
+
+.process-action-btn .octicon {
+  flex-shrink: 0;
+}
