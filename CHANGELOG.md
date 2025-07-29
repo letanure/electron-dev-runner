@@ -1,3 +1,9 @@
+## [1.0.10](https://github.com/letanure/electron-dev-runner/compare/v1.0.9...v1.0.10) (2025-07-29)
+
+### 🐛 Bug Fixes
+
+* resolve packaged app issues ([a0dba1a](https://github.com/letanure/electron-dev-runner/commit/a0dba1a7c56982a882ab4b7d6e62c08026833b47))
+
 ## [1.0.9](https://github.com/letanure/electron-dev-runner/compare/v1.0.8...v1.0.9) (2025-07-29)
 
 ### 🐛 Bug Fixes
