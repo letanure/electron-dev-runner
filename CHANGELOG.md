@@ -1,3 +1,9 @@
+## [1.0.3](https://github.com/letanure/electron-dev-runner/compare/v1.0.2...v1.0.3) (2025-07-29)
+
+### 🐛 Bug Fixes
+
+* **ci:** simplify workflow to always build installers after release ([f67e0bd](https://github.com/letanure/electron-dev-runner/commit/f67e0bd1c9d8ca9aa6d2f5d7840b290e72275af0))
+
 ## [1.0.2](https://github.com/letanure/electron-dev-runner/compare/v1.0.1...v1.0.2) (2025-07-29)
 
 ### 🐛 Bug Fixes
