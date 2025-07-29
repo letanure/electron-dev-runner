@@ -1,3 +1,9 @@
+## [1.0.7](https://github.com/letanure/electron-dev-runner/compare/v1.0.6...v1.0.7) (2025-07-29)
+
+### 🐛 Bug Fixes
+
+* temporarily add electron to dependencies during build ([d3f3f27](https://github.com/letanure/electron-dev-runner/commit/d3f3f27532985efc0fa90c7fb7314b61dc986839))
+
 ## [1.0.6](https://github.com/letanure/electron-dev-runner/compare/v1.0.5...v1.0.6) (2025-07-29)
 
 ### 🐛 Bug Fixes
