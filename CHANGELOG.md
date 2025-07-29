@@ -1,3 +1,9 @@
+## [1.0.6](https://github.com/letanure/electron-dev-runner/compare/v1.0.5...v1.0.6) (2025-07-29)
+
+### 🐛 Bug Fixes
+
+* configure electron-builder to include electron runtime ([87a2c9a](https://github.com/letanure/electron-dev-runner/commit/87a2c9a038aec586d1dbc34844b66f833cbbb15d))
+
 ## [1.0.5](https://github.com/letanure/electron-dev-runner/compare/v1.0.4...v1.0.5) (2025-07-29)
 
 ### 🐛 Bug Fixes
