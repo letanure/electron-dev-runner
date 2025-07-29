@@ -74,7 +74,6 @@
   "build": {
     "appId": "com.letanure.electron-dev-runner",
     "productName": "Electron Dev Runner",
-    "includeSubNodeModules": true,
     "directories": {
       "output": "release"
     },
