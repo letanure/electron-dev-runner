@@ -1,25 +1,61 @@
 # Release Instructions
 
-This project uses GitHub Actions for automated cross-platform builds and releases.
+This project uses **Semantic Release** for automated versioning, changelog generation, and cross-platform builds.
 
 ## How to Release
 
-1. **Update version** in `package.json`:
+### Automatic Releases (Recommended)
+
+1. **Write conventional commits** and push to `main`:
    ```bash
-   npm version patch  # for bug fixes (1.0.0 → 1.0.1)
-   npm version minor  # for new features (1.0.0 → 1.1.0)  
-   npm version major  # for breaking changes (1.0.0 → 2.0.0)
+   git commit -m "feat: add new file viewer feature"
+   git commit -m "fix: resolve port detection issue"
+   git commit -m "docs: update installation instructions"
    ```
 
-2. **Push the tag**:
+2. **Push to main**:
    ```bash
-   git push origin main --tags
+   git push origin main
    ```
 
-3. **GitHub Actions will automatically**:
-   - Build for macOS (Intel + Apple Silicon), Windows, and Linux
-   - Create a GitHub Release
-   - Upload installers as release assets
+3. **Semantic Release automatically**:
+   - Analyzes commit messages
+   - Determines version bump (patch/minor/major)
+   - Generates CHANGELOG.md
+   - Creates git tag and GitHub Release
+   - Builds for macOS, Windows, Linux
+   - Uploads installers as release assets
+
+### Commit Message Format
+
+Use [Conventional Commits](https://conventionalcommits.org/):
+
+```
+<type>: <description>
+
+[optional body]
+
+[optional footer]
+```
+
+**Types that trigger releases:**
+- `feat`: ✨ New feature → **minor** version (1.0.0 → 1.1.0)
+- `fix`: 🐛 Bug fix → **patch** version (1.0.0 → 1.0.1)  
+- `perf`: ⚡ Performance improvement → **patch** version
+- `docs`: 📚 Documentation → **patch** version
+
+**Types that don't trigger releases:**
+- `chore`: 🔧 Maintenance tasks
+- `ci`: ⚙️ CI/CD changes
+- `test`: 🧪 Tests
+
+**Breaking changes:**
+```bash
+git commit -m "feat!: redesign main interface
+
+BREAKING CHANGE: removed legacy folder tree API"
+# Results in major version bump (1.0.0 → 2.0.0)
+```
 
 ## Release Assets Created
 
