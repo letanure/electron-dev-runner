@@ -1,3 +1,9 @@
+## [1.0.4](https://github.com/letanure/electron-dev-runner/compare/v1.0.3...v1.0.4) (2025-07-29)
+
+### 🐛 Bug Fixes
+
+* **ci:** use pnpm instead of yarn for electron-builder ([e81093d](https://github.com/letanure/electron-dev-runner/commit/e81093dbc0fb6366086dc778c9d8ee4de650787e))
+
 ## [1.0.3](https://github.com/letanure/electron-dev-runner/compare/v1.0.2...v1.0.3) (2025-07-29)
 
 ### 🐛 Bug Fixes
