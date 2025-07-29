@@ -245,47 +245,8 @@ function ServerPanel({ selectedPath }: ServerPanelProps) {
             {discoveredServers.map((server) => {
               const hasWindow = server.window && !server.window.isDestroyed();
               const displayTitle = server.title || `Port ${server.port}`;
-              const projectPath = server.processInfo?.cwd;
               
-              // Helper function to clean up paths
-              const cleanUpPath = (path: string) => {
-                // For /Applications/ paths, show only first 2 parts: /Applications/App name
-                if (path.startsWith('/Applications/')) {
-                  const parts = path.split('/');
-                  if (parts.length >= 3) {
-                    return `/${parts[1]}/${parts[2]}`;
-                  }
-                }
-                
-                // For paths with node_modules, show only until node_modules
-                const nodeModulesIndex = path.indexOf('/node_modules');
-                if (nodeModulesIndex !== -1) {
-                  return path.substring(0, nodeModulesIndex);
-                }
-                
-                return path;
-              };
 
-              // Clean up the working directory path
-              const cleanPath = projectPath ? cleanUpPath(projectPath) : null;
-              
-              // Clean up the command by replacing long paths with cleaned versions
-              const cleanCommand = server.processInfo?.command ? (() => {
-                let cmd = server.processInfo.command;
-                
-                // Replace /Applications/ paths with just /Applications/AppName
-                cmd = cmd.replace(/\/Applications\/[^\s]+/g, (match) => {
-                  return cleanUpPath(match);
-                });
-                
-                // Replace paths that contain node_modules
-                cmd = cmd.replace(/\/[^\s]*\/node_modules[^\s]*/g, (match) => {
-                  const nodeModulesIndex = match.indexOf('/node_modules');
-                  return match.substring(0, nodeModulesIndex);
-                });
-                
-                return cmd;
-              })() : null;
               
               return (
                 <div key={server.port} className="server-item">
