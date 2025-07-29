@@ -90,6 +90,10 @@
   border: 1px solid var(--gh-accent-muted);
   flex-shrink: 0;
   white-space: nowrap;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .server-path {
@@ -117,14 +121,14 @@
 
 .launch-btn {
   position: absolute;
-  top: 8px;
+  top: 12px;
   right: 8px;
   width: 28px;
   height: 28px;
   border-radius: 6px;
-  border: 1px solid var(--gh-border-default);
-  background-color: var(--gh-canvas-default);
-  color: white;
+  border: 1px solid var(--gh-accent-emphasis);
+  background-color: var(--gh-accent-emphasis);
+  color: var(--gh-fg-on-emphasis);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -133,9 +137,13 @@
   transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.launch-btn svg {
+  fill: white;
+}
+
 .launch-btn:hover {
-  background-color: var(--gh-canvas-subtle);
-  border-color: var(--gh-border-muted);
+  background-color: var(--gh-accent-fg);
+  color: var(--gh-fg-on-emphasis);
   transform: scale(1.05);
 }
 
@@ -146,8 +154,8 @@
 }
 
 .launch-btn.launch:hover {
-  background-color: var(--gh-accent-muted);
-  border-color: var(--gh-accent-muted);
+  background-color: var(--gh-accent-fg);
+  color: var(--gh-fg-on-emphasis);
 }
 
 .launch-btn.focused {
@@ -157,8 +165,8 @@
 }
 
 .launch-btn.focused:hover {
-  background-color: var(--gh-success-muted);
-  border-color: var(--gh-success-muted);
+  background-color: var(--gh-success-fg);
+  color: var(--gh-fg-on-emphasis);
 }
 
 .no-servers {
