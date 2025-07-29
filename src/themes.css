@@ -263,3 +263,16 @@ body {
 .octicon-file-directory-fill.has-package {
   color: var(--gh-success-fg);
 }
+
+/* Button icon colors for better contrast */
+.script-button .octicon {
+  color: var(--gh-fg-on-emphasis);
+}
+
+.terminal-button .octicon {
+  color: var(--gh-fg-default);
+}
+
+.stop-button .octicon {
+  color: var(--gh-fg-on-emphasis);
+}

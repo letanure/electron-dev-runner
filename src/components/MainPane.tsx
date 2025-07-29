@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import './MainPane.css';
-import { FolderIcon, FileIcon } from './Icons';
+import { FolderIcon, FileIcon, PlayIcon, TerminalIcon } from './Icons';
 
 const fs = require('node:fs');
 const path = require('node:path');
@@ -270,6 +270,86 @@ function MainPane({ selectedPath, onSelectPath, onViewFile }: MainPaneProps) {
     });
   };
 
+  const openInTerminal = (scriptName: string) => {
+    const projectName = packageJson?.name || path.basename(selectedPath);
+    const command = `npm run ${scriptName}`;
+    
+    // Detect the operating system and open appropriate terminal
+    const platform = process.platform;
+    
+    try {
+      if (platform === 'darwin') {
+        // macOS - use osascript to open Terminal with command
+        const escapedPath = selectedPath.replace(/'/g, "'\"'\"'");
+        const terminalScript = `tell application "Terminal"
+          activate
+          do script "cd '${escapedPath}' && ${command}"
+        end tell`;
+        
+        const child = spawn('osascript', ['-e', terminalScript], { 
+          detached: true,
+          stdio: ['ignore', 'pipe', 'pipe']
+        });
+        
+        child.stdout?.on('data', (data) => {
+          console.log('osascript stdout:', data.toString());
+        });
+        
+        child.stderr?.on('data', (data) => {
+          console.error('osascript stderr:', data.toString());
+        });
+        
+        child.on('close', (code) => {
+          console.log(`osascript exited with code ${code}`);
+        });
+        
+        child.unref();
+        console.log('Executed osascript command for Terminal');
+      } else if (platform === 'win32') {
+        // Windows - open Command Prompt
+        spawn('cmd', ['/c', 'start', 'cmd', '/k', `cd /d "${selectedPath}" && ${command}`], { 
+          detached: true,
+          shell: true,
+          stdio: 'ignore'
+        }).unref();
+      } else {
+        // Linux - try common terminal emulators
+        const terminals = [
+          { cmd: 'gnome-terminal', args: ['--working-directory', selectedPath, '--', 'bash', '-c', `${command}; exec bash`] },
+          { cmd: 'konsole', args: ['--workdir', selectedPath, '-e', 'bash', '-c', `${command}; exec bash`] },
+          { cmd: 'xfce4-terminal', args: ['--working-directory', selectedPath, '-e', `bash -c "${command}; exec bash"`] },
+          { cmd: 'xterm', args: ['-e', `bash -c "cd '${selectedPath}' && ${command}; exec bash"`] },
+          { cmd: 'x-terminal-emulator', args: ['-e', `bash -c "cd '${selectedPath}' && ${command}; exec bash"`] }
+        ];
+        
+        let opened = false;
+        
+        for (const terminal of terminals) {
+          try {
+            spawn(terminal.cmd, terminal.args, { 
+              detached: true,
+              stdio: 'ignore'
+            }).unref();
+            opened = true;
+            console.log(`Opened ${terminal.cmd} successfully`);
+            break;
+          } catch (e) {
+            console.log(`Failed to open ${terminal.cmd}:`, e.message);
+            continue;
+          }
+        }
+        
+        if (!opened) {
+          console.error('No terminal emulator found');
+        }
+      }
+      
+      console.log(`Opening terminal for: ${command} in ${projectName}`);
+    } catch (error) {
+      console.error('Error opening terminal:', error);
+    }
+  };
+
   const runScript = async (scriptName: string) => {
     if (runningProcesses.has(scriptName)) {
       console.log(`${scriptName} is already running`);
@@ -282,6 +362,11 @@ function MainPane({ selectedPath, onSelectPath, onViewFile }: MainPaneProps) {
     const process = spawn('npm', ['run', scriptName], {
       cwd: selectedPath,
       stdio: 'pipe'
+    });
+
+    // Check if process started successfully
+    process.on('spawn', () => {
+      console.log(`${scriptName}: Process spawned successfully`);
     });
 
     setRunningProcesses(prev => new Map(prev.set(scriptName, process)));
@@ -311,6 +396,11 @@ function MainPane({ selectedPath, onSelectPath, onViewFile }: MainPaneProps) {
       const output = data.toString();
       console.error(`[${scriptName} ERROR]:`, output);
       
+      // Check if it's a fatal error that would cause immediate exit
+      if (output.includes('ENOENT') || output.includes('command not found') || output.includes('not found')) {
+        console.error(`${scriptName}: Fatal error detected, process will likely exit`);
+      }
+      
       if (!portDetected) {
         const port = detectPortFromOutput(output);
         if (port) {
@@ -325,6 +415,9 @@ function MainPane({ selectedPath, onSelectPath, onViewFile }: MainPaneProps) {
 
     process.on('close', (code: number) => {
       console.log(`${scriptName} process exited with code ${code}`);
+      if (code !== 0) {
+        console.error(`${scriptName} failed with exit code ${code}`);
+      }
       setRunningProcesses(prev => {
         const newMap = new Map(prev);
         newMap.delete(scriptName);
@@ -340,6 +433,13 @@ function MainPane({ selectedPath, onSelectPath, onViewFile }: MainPaneProps) {
         return newMap;
       });
     });
+
+    // Add timeout to prevent stuck processes
+    const timeout = setTimeout(() => {
+      if (runningProcesses.has(scriptName) && !portDetected) {
+        console.log(`${scriptName}: No port detected after 30 seconds, but keeping process running`);
+      }
+    }, 30000);
   };
 
   const formatReadmeContent = (content: string) => {
@@ -476,7 +576,6 @@ function MainPane({ selectedPath, onSelectPath, onViewFile }: MainPaneProps) {
           <div className="pdf-viewer">
             <iframe 
               src={fileContent}
-              type="application/pdf"
               className="file-pdf"
               title={path.basename(viewingFile)}
             />
@@ -498,11 +597,15 @@ function MainPane({ selectedPath, onSelectPath, onViewFile }: MainPaneProps) {
     <div className="main-pane">
       {packageJson && (
         <div className="package-section">
-          <h3><FolderIcon size={16} className="has-package" /> {packageJson.name || 'Node.js Project'}</h3>
-          <div className="package-info">
+          <div className="package-header">
+            <h3><FolderIcon size={16} className="has-package" /> {packageJson.name || 'Node.js Project'}</h3>
             {packageJson.version && <span className="version">v{packageJson.version}</span>}
-            {packageJson.description && <p className="description">{packageJson.description}</p>}
           </div>
+          {packageJson.description && (
+            <div className="package-info">
+              <p className="description">{packageJson.description}</p>
+            </div>
+          )}
 
           {needsInstall && (
             <div className="install-warning">
@@ -531,35 +634,80 @@ function MainPane({ selectedPath, onSelectPath, onViewFile }: MainPaneProps) {
                     const isRunning = runningProcesses.has(name);
                     return (
                       <div key={name} className="script-item">
-                        <div className="script-controls">
-                          <button 
-                            className={`script-button ${isRunning ? 'running' : ''} ${needsInstall ? 'needs-install' : ''}`}
-                            onClick={() => runScript(name)}
-                            disabled={isRunning || needsInstall}
-                            type="button"
-                            title={needsInstall ? 'Install dependencies first' : ''}
-                          >
-                            {isRunning ? '🔄' : '▶️'} {name}
-                          </button>
-                          {isRunning && (
+                        <div className="script-single-line">
+                          <span className="script-name">{name}</span>
+                          <div className="script-controls">
                             <button 
-                              className="stop-button"
-                              onClick={() => stopScript(name)}
+                              className="terminal-button gh-btn gh-btn-secondary"
+                              onClick={() => openInTerminal(name)}
+                              disabled={needsInstall}
                               type="button"
-                              title="Stop process"
+                              title={needsInstall ? 'Install dependencies first' : `Run "npm run ${name}" in system terminal`}
                             >
-                              ⏹️
+                              <TerminalIcon size={12} />
                             </button>
-                          )}
+                            {!isRunning ? (
+                              <button 
+                                className={`script-button electron-button ${needsInstall ? 'needs-install' : ''}`}
+                                onClick={() => runScript(name)}
+                                disabled={needsInstall}
+                                type="button"
+                                title={needsInstall ? 'Install dependencies first' : `Run "${name}" in new Electron window with auto port detection`}
+                              >
+                                <PlayIcon size={12} />
+                              </button>
+                            ) : (
+                              <button 
+                                className="stop-button"
+                                onClick={() => stopScript(name)}
+                                type="button"
+                                title="Stop running process and close window"
+                              >
+                                ⏹️
+                              </button>
+                            )}
+                          </div>
+                          <span className="script-command">{command}</span>
+                          {isRunning && <span className="running-indicator">Running...</span>}
                         </div>
-                        <span className="script-command">{command}</span>
-                        {isRunning && <span className="running-indicator">Running...</span>}
                       </div>
                     );
                   })}
               </div>
               {Object.entries(packageJson.scripts).filter(([name, command]) => isDevScript(name, command)).length === 0 && (
                 <p className="no-dev-scripts">No development scripts found</p>
+              )}
+            </div>
+          )}
+
+          {packageJson.scripts && (
+            <div className="scripts">
+              <h4>Other Scripts:</h4>
+              <div className="script-buttons">
+                {Object.entries(packageJson.scripts)
+                  .filter(([name, command]) => !isDevScript(name, command))
+                  .map(([name, command]) => (
+                    <div key={name} className="script-item">
+                      <div className="script-single-line">
+                        <span className="script-name">{name}</span>
+                        <div className="script-controls">
+                          <button 
+                            className="terminal-button gh-btn gh-btn-secondary"
+                            onClick={() => openInTerminal(name)}
+                            disabled={needsInstall}
+                            type="button"
+                            title={needsInstall ? 'Install dependencies first' : `Run "npm run ${name}" in system terminal`}
+                          >
+                            <TerminalIcon size={12} />
+                          </button>
+                        </div>
+                        <span className="script-command">{command}</span>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+              {Object.entries(packageJson.scripts).filter(([name, command]) => !isDevScript(name, command)).length === 0 && (
+                <p className="no-dev-scripts">No other scripts found</p>
               )}
             </div>
           )}
