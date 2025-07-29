@@ -71,7 +71,11 @@ jobs:
         run: pnpm install
 
       - name: Build Electron app
-        run: pnpm run build && pnpm run dist
+        run: |
+          pnpm run build
+          # Add electron to dependencies temporarily for bundling
+          npm pkg set dependencies.electron="^37.2.4"
+          pnpm run dist
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
