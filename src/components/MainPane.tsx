@@ -162,9 +162,17 @@ function MainPane({ selectedPath, onSelectPath, onViewFile, globalProcesses, onP
     
     console.log(`Installing dependencies with ${packageManager} in ${projectName}...`);
 
-    const installProcess = spawn(packageManager, ['install'], {
+    const pmCmd = process.platform === 'win32' && packageManager === 'npm' ? 'npm.cmd' : packageManager;
+    
+    const installProcess = spawn(pmCmd, ['install'], {
       cwd: selectedPath,
-      stdio: 'pipe'
+      stdio: 'pipe',
+      shell: true,
+      env: {
+        ...process.env,
+        PATH: process.env.PATH + (process.platform === 'win32' ? ';' : ':') + 
+              '/usr/local/bin:/opt/homebrew/bin:/usr/bin'
+      }
     });
 
     installProcess.stdout.on('data', (data: Buffer) => {
@@ -427,14 +435,23 @@ function MainPane({ selectedPath, onSelectPath, onViewFile, globalProcesses, onP
     const projectName = packageJson?.name || path.basename(selectedPath);
     console.log(`Starting: npm run ${scriptName} in ${projectName}`);
 
-    const process = spawn('npm', ['run', scriptName], {
+    // Use which command to find npm path, or fallback to common locations
+    const npmPath = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+    
+    const childProcess = spawn(npmPath, ['run', scriptName], {
       cwd: selectedPath,
-      stdio: 'pipe'
+      stdio: 'pipe',
+      shell: true, // This ensures PATH is used
+      env: {
+        ...process.env,
+        PATH: process.env.PATH + (process.platform === 'win32' ? ';' : ':') + 
+              '/usr/local/bin:/opt/homebrew/bin:/usr/bin'
+      }
     });
 
     // Create process info object
     const processInfo: ProcessInfo = {
-      process,
+      process: childProcess,
       projectPath: selectedPath,
       scriptName,
       status: 'starting'
@@ -446,7 +463,7 @@ function MainPane({ selectedPath, onSelectPath, onViewFile, globalProcesses, onP
     onProcessUpdate(newProcesses);
 
     // Check if process started successfully
-    process.on('spawn', () => {
+    childProcess.on('spawn', () => {
       console.log(`${scriptName}: Process spawned successfully`);
       // Update status to running
       const updatedProcesses = new Map(newProcesses);
@@ -460,7 +477,7 @@ function MainPane({ selectedPath, onSelectPath, onViewFile, globalProcesses, onP
 
     let portDetected = false;
 
-    process.stdout.on('data', (data: any) => {
+    childProcess.stdout.on('data', (data: any) => {
       const output = data.toString();
       console.log(`[${scriptName}]:`, output);
 
@@ -488,7 +505,7 @@ function MainPane({ selectedPath, onSelectPath, onViewFile, globalProcesses, onP
       }
     });
 
-    process.stderr.on('data', (data: any) => {
+    childProcess.stderr.on('data', (data: any) => {
       const output = data.toString();
       console.error(`[${scriptName} ERROR]:`, output);
       
@@ -519,7 +536,7 @@ function MainPane({ selectedPath, onSelectPath, onViewFile, globalProcesses, onP
       }
     });
 
-    process.on('close', (code: any) => {
+    childProcess.on('close', (code: any) => {
       console.log(`${scriptName} process exited with code ${code}`);
       if (code !== 0) {
         console.error(`${scriptName} failed with exit code ${code}`);
@@ -531,7 +548,7 @@ function MainPane({ selectedPath, onSelectPath, onViewFile, globalProcesses, onP
       onProcessUpdate(currentProcesses);
     });
 
-    process.on('error', (error: any) => {
+    childProcess.on('error', (error: any) => {
       console.error(`Failed to start ${scriptName}:`, error);
       
       // Update process status to error
