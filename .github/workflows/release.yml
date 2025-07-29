@@ -70,12 +70,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build and release Electron app
-        uses: samuelmeuli/action-electron-builder@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          release: false
-          build_script_name: build
+      - name: Build Electron app
+        run: pnpm run build && pnpm run dist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Get latest tag
         id: tag
