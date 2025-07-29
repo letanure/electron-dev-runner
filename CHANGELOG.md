@@ -1,3 +1,9 @@
+## [1.0.1](https://github.com/letanure/electron-dev-runner/compare/v1.0.0...v1.0.1) (2025-07-29)
+
+### 🐛 Bug Fixes
+
+* correct paths in package.json ([d30ceb8](https://github.com/letanure/electron-dev-runner/commit/d30ceb87457d425d5e2f1762cc112c2325ec7e09))
+
 ## 1.0.0 (2025-07-29)
 
 ### 🚀 Features
