@@ -1,0 +1,129 @@
+.main-pane {
+  padding: 1.25rem;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.path-header {
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #333;
+}
+
+.current-path {
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: #ccc;
+}
+
+.package-section {
+  background-color: #2a2a2a;
+  padding: 1.25rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid #4ade80;
+}
+
+.package-section h3 {
+  margin: 0 0 0.5rem 0;
+  color: #4ade80;
+  font-size: 1.1rem;
+}
+
+.version {
+  margin: 0 0 1rem 0;
+  color: #999;
+  font-size: 0.8rem;
+}
+
+.scripts h4 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.9rem;
+  color: #ddd;
+}
+
+.script-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.script-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.script-button {
+  padding: 0.4rem 0.8rem;
+  background-color: #646cff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  min-width: 80px;
+  text-align: left;
+}
+
+.script-button:hover {
+  background-color: #535bf2;
+}
+
+.script-command {
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: #999;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-list {
+  margin-top: 1.5rem;
+}
+
+.file-list h4 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.9rem;
+  color: #ddd;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  margin-bottom: 0.2rem;
+  transition: background-color 0.2s;
+}
+
+.file-item:hover {
+  background-color: #333;
+}
+
+.file-item.directory {
+  font-weight: 500;
+}
+
+.icon {
+  font-size: 0.9rem;
+  width: 1.2rem;
+  text-align: center;
+}
+
+.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.empty {
+  text-align: center;
+  color: #666;
+  padding: 1rem;
+  font-style: italic;
+  font-size: 0.8rem;
+}

@@ -1,0 +1,194 @@
+import { useState, useEffect } from 'react';
+import './FolderTree.css';
+
+const fs = require('fs');
+const path = require('path');
+
+interface FolderTreeProps {
+  selectedPath: string;
+  onSelectPath: (path: string) => void;
+}
+
+interface TreeNode {
+  name: string;
+  path: string;
+  isExpanded: boolean;
+  hasPackageJson: boolean;
+  children: TreeNode[];
+}
+
+function FolderTree({ selectedPath, onSelectPath }: FolderTreeProps) {
+  const [rootNodes, setRootNodes] = useState<TreeNode[]>([]);
+
+  const checkPackageJson = (dirPath: string): boolean => {
+    try {
+      return fs.existsSync(path.join(dirPath, 'package.json'));
+    } catch {
+      return false;
+    }
+  };
+
+  const loadChildren = (nodePath: string): TreeNode[] => {
+    try {
+      const items = fs.readdirSync(nodePath, { withFileTypes: true });
+      return items
+        .filter((item: any) => item.isDirectory() && !item.name.startsWith('.'))
+        .map((item: any) => {
+          const childPath = path.join(nodePath, item.name);
+          return {
+            name: item.name,
+            path: childPath,
+            isExpanded: false,
+            hasPackageJson: checkPackageJson(childPath),
+            children: []
+          };
+        })
+        .sort((a, b) => {
+          if (a.hasPackageJson && !b.hasPackageJson) return -1;
+          if (!a.hasPackageJson && b.hasPackageJson) return 1;
+          return a.name.localeCompare(b.name);
+        });
+    } catch {
+      return [];
+    }
+  };
+
+  useEffect(() => {
+    const homeDir = require('os').homedir();
+    const initialNodes = [
+      {
+        name: '🏠 Home',
+        path: homeDir,
+        isExpanded: true,
+        hasPackageJson: checkPackageJson(homeDir),
+        children: loadChildren(homeDir)
+      }
+    ];
+    setRootNodes(initialNodes);
+  }, []);
+
+  // Auto-expand path to show current selection
+  useEffect(() => {
+    if (selectedPath) {
+      expandPathTo(selectedPath);
+    }
+  }, [selectedPath]);
+
+  const expandPathTo = (targetPath: string) => {
+    const pathParts = targetPath.split(path.sep);
+    const homeDir = require('os').homedir();
+    
+    const updateNodesRecursively = (nodes: TreeNode[], currentPath: string): TreeNode[] => {
+      return nodes.map(node => {
+        if (targetPath.startsWith(node.path)) {
+          return {
+            ...node,
+            isExpanded: true,
+            children: node.children.length > 0 ? 
+              updateNodesRecursively(node.children, node.path) : 
+              loadChildren(node.path)
+          };
+        }
+        return node;
+      });
+    };
+
+    setRootNodes(prev => updateNodesRecursively(prev, homeDir));
+  };
+
+  const toggleExpand = (targetPath: string) => {
+    const updateNodes = (nodes: TreeNode[]): TreeNode[] => {
+      return nodes.map(node => {
+        if (node.path === targetPath) {
+          const newExpanded = !node.isExpanded;
+          return {
+            ...node,
+            isExpanded: newExpanded,
+            children: newExpanded ? loadChildren(node.path) : []
+          };
+        }
+        if (node.children.length > 0) {
+          return {
+            ...node,
+            children: updateNodes(node.children)
+          };
+        }
+        return node;
+      });
+    };
+
+    setRootNodes(updateNodes(rootNodes));
+  };
+
+  const renderNode = (node: TreeNode, depth: number = 0) => {
+    const isSelected = node.path === selectedPath;
+    
+    return (
+      <div key={node.path}>
+        <div
+          className={`tree-node ${isSelected ? 'selected' : ''}`}
+          style={{ paddingLeft: `${depth * 20 + 10}px` }}
+          onClick={() => onSelectPath(node.path)}
+        >
+          <span
+            className="expand-icon"
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleExpand(node.path);
+            }}
+          >
+            {node.isExpanded ? '▼' : '▶'}
+          </span>
+          <span className="folder-icon">
+            {node.hasPackageJson ? '📦' : '📁'}
+          </span>
+          <span className={`folder-name ${node.hasPackageJson ? 'has-package' : ''}`}>
+            {node.name}
+          </span>
+        </div>
+        
+        {node.isExpanded && node.children.map(child => 
+          renderNode(child, depth + 1)
+        )}
+      </div>
+    );
+  };
+
+  const renderBreadcrumb = () => {
+    const homeDir = require('os').homedir();
+    const relativePath = selectedPath.replace(homeDir, '').split(path.sep).filter(Boolean);
+    
+    return (
+      <div className="breadcrumb">
+        <span className="breadcrumb-item" onClick={() => onSelectPath(homeDir)}>
+          🏠 Home
+        </span>
+        {relativePath.map((part, index) => {
+          const fullPath = path.join(homeDir, ...relativePath.slice(0, index + 1));
+          return (
+            <span key={fullPath}>
+              <span className="breadcrumb-separator">/</span>
+              <span 
+                className="breadcrumb-item"
+                onClick={() => onSelectPath(fullPath)}
+              >
+                {part}
+              </span>
+            </span>
+          );
+        })}
+      </div>
+    );
+  };
+
+  return (
+    <div className="folder-tree">
+      {renderBreadcrumb()}
+      <div className="tree-content">
+        {rootNodes.map(node => renderNode(node))}
+      </div>
+    </div>
+  );
+}
+
+export default FolderTree;
