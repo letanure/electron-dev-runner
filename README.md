@@ -1,6 +1,6 @@
-# Dev Runner
+# Electron Dev Runner
 
-A GitHub-styled Electron app for managing and running development projects with automatic port detection and window management.
+An Electron desktop app that helps developers manage and run their Node.js projects. Navigate through your development folders, run dev scripts in separate Electron windows with automatic port detection, and manage all your development processes from one clean interface.
 
 ![Dev Runner Screenshot](https://via.placeholder.com/800x500/0d1117/58a6ff?text=Dev+Runner+Screenshot)
 
@@ -21,7 +21,7 @@ A GitHub-styled Electron app for managing and running development projects with 
 
 Download the latest release for your platform:
 
-- **macOS**: [Dev Runner-1.0.0-arm64.dmg](./release/Dev%20Runner-1.0.0-arm64.dmg) (Apple Silicon)
+- **macOS**: [Electron Dev Runner-1.0.0-arm64.dmg](./release/Dev%20Runner-1.0.0-arm64.dmg) (Apple Silicon)
 - **Windows**: Coming soon
 - **Linux**: Coming soon
 
