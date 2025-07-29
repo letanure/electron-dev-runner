@@ -139,10 +139,9 @@ function FolderTree({ selectedPath, onSelectPath }: FolderTreeProps) {
         <div
           className={`tree-node ${isSelected ? 'selected' : ''}`}
           style={{ paddingLeft: `${depth * 20 + 10}px` }}
-          onClick={() => onSelectPath(node.path)}
         >
           <span
-            className="expand-icon"
+            className={`expand-icon ${nodeHasSubfolders ? 'expandable' : ''}`}
             onClick={(e) => {
               e.stopPropagation();
               if (nodeHasSubfolders) {
@@ -152,11 +151,16 @@ function FolderTree({ selectedPath, onSelectPath }: FolderTreeProps) {
           >
             {nodeHasSubfolders ? (node.isExpanded ? '▼' : '▶') : '  '}
           </span>
-          <span className="folder-icon">
-            {node.hasPackageJson ? '📦' : '📁'}
-          </span>
-          <span className={`folder-name ${node.hasPackageJson ? 'has-package' : ''}`}>
-            {node.name}
+          <span 
+            className="folder-content"
+            onClick={() => onSelectPath(node.path)}
+          >
+            <span className="folder-icon">
+              {node.hasPackageJson ? '📦' : '📁'}
+            </span>
+            <span className="folder-name">
+              {node.name}
+            </span>
           </span>
         </div>
         
