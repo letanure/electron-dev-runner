@@ -1,3 +1,9 @@
+## [1.0.8](https://github.com/letanure/electron-dev-runner/compare/v1.0.7...v1.0.8) (2025-07-29)
+
+### 🐛 Bug Fixes
+
+* remove invalid includeSubNodeModules config ([977ee2a](https://github.com/letanure/electron-dev-runner/commit/977ee2adb73551ec486aca79e849c8fc2795666c))
+
 ## [1.0.7](https://github.com/letanure/electron-dev-runner/compare/v1.0.6...v1.0.7) (2025-07-29)
 
 ### 🐛 Bug Fixes
