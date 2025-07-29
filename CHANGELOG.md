@@ -1,3 +1,9 @@
+## [1.0.2](https://github.com/letanure/electron-dev-runner/compare/v1.0.1...v1.0.2) (2025-07-29)
+
+### 🐛 Bug Fixes
+
+* **ci:** update GitHub Actions workflow to create downloadable installers ([7470034](https://github.com/letanure/electron-dev-runner/commit/7470034f2b6140ecf0283551abd7a8be19da9f47))
+
 ## [1.0.1](https://github.com/letanure/electron-dev-runner/compare/v1.0.0...v1.0.1) (2025-07-29)
 
 ### 🐛 Bug Fixes
