@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './MainPane.css';
 import { FolderIcon, FileIcon, PlayIcon, TerminalIcon, StopIcon } from './Icons';
 
@@ -38,6 +38,9 @@ interface MainPaneProps {
 }
 
 function MainPane({ selectedPath, onSelectPath, onViewFile, globalProcesses, onProcessUpdate }: MainPaneProps) {
+  // Use a ref to always have the latest processes reference
+  const processesRef = useRef(globalProcesses);
+  processesRef.current = globalProcesses;
   const [packageJson, setPackageJson] = useState<PackageJson | null>(null);
   const [readmeContent, setReadmeContent] = useState<string | null>(null);
   const [readmeFile, setReadmeFile] = useState<string | null>(null);
@@ -244,19 +247,18 @@ function MainPane({ selectedPath, onSelectPath, onViewFile, globalProcesses, onP
         }
       });
 
-      // Store the window reference in global processes
-      const currentProcesses = new Map(globalProcesses);
-      const processInfo = currentProcesses.get(processKey);
+      // Store the window reference using the ref to get latest processes
+      const processesMap = new Map(processesRef.current);
+      const processInfo = processesMap.get(processKey);
+      
       if (processInfo) {
         processInfo.window = devWindow;
-        currentProcesses.set(processKey, processInfo);
-        onProcessUpdate(currentProcesses);
+        processesMap.set(processKey, processInfo);
+        onProcessUpdate(processesMap);
       }
 
       // Listen for window close event
       devWindow.on('closed', () => {
-        console.log(`Dev window closed for ${processKey}, stopping process...`);
-        
         // Remove window reference from process info
         const updatedProcesses = new Map(globalProcesses);
         const currentInfo = updatedProcesses.get(processKey);
@@ -289,7 +291,6 @@ function MainPane({ selectedPath, onSelectPath, onViewFile, globalProcesses, onP
     const processInfo = globalProcesses.get(processKey);
     
     if (!processInfo?.process) {
-      console.log(`No process found for ${processKey}`);
       // If no process found, just remove from UI
       const currentProcesses = new Map(globalProcesses);
       currentProcesses.delete(processKey);
@@ -297,12 +298,12 @@ function MainPane({ selectedPath, onSelectPath, onViewFile, globalProcesses, onP
       return;
     }
 
-    console.log(`Stopping: ${processKey}`);
-    
     // Close the associated window first
-    if (processInfo.window && !processInfo.window.isDestroyed()) {
+    if (processInfo.window) {
       try {
-        processInfo.window.close();
+        if (!processInfo.window.isDestroyed()) {
+          processInfo.window.close();
+        }
       } catch (error) {
         console.error(`Error closing window for ${processKey}:`, error);
       }
