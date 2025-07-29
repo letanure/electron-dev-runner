@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './MainPane.css';
 import { FolderIcon, FileIcon } from './Icons';
 
@@ -354,16 +354,61 @@ function MainPane({ selectedPath, onSelectPath, onViewFile }: MainPaneProps) {
       .replace(/\n/g, '<br/>');
   };
 
-  const isDevFile = (fileName: string): boolean => {
-    const devExtensions = ['.txt', '.md', '.js', '.ts', '.jsx', '.tsx', '.json', '.css', '.scss', '.html', '.xml', '.yaml', '.yml', '.toml', '.ini', '.env', '.gitignore', '.py', '.rs', '.go', '.java', '.c', '.cpp', '.h', '.hpp'];
+  const isViewableFile = (fileName: string): boolean => {
+    const textExtensions = ['.txt', '.md', '.js', '.ts', '.jsx', '.tsx', '.json', '.css', '.scss', '.html', '.xml', '.yaml', '.yml', '.toml', '.ini', '.env', '.gitignore', '.py', '.rs', '.go', '.java', '.c', '.cpp', '.h', '.hpp'];
+    const imageExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.bmp', '.ico'];
+    const pdfExtensions = ['.pdf'];
     const extension = path.extname(fileName).toLowerCase();
-    return devExtensions.includes(extension) || fileName.startsWith('.');
+    return textExtensions.includes(extension) || imageExtensions.includes(extension) || pdfExtensions.includes(extension) || fileName.startsWith('.');
+  };
+
+  const getFileType = (fileName: string): 'text' | 'image' | 'pdf' => {
+    const extension = path.extname(fileName).toLowerCase();
+    const imageExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.bmp', '.ico'];
+    const pdfExtensions = ['.pdf'];
+    
+    if (imageExtensions.includes(extension)) return 'image';
+    if (pdfExtensions.includes(extension)) return 'pdf';
+    return 'text';
+  };
+
+  const getMimeType = (extension: string): string => {
+    const mimeTypes: Record<string, string> = {
+      '.png': 'image/png',
+      '.jpg': 'image/jpeg',
+      '.jpeg': 'image/jpeg',
+      '.gif': 'image/gif',
+      '.svg': 'image/svg+xml',
+      '.webp': 'image/webp',
+      '.bmp': 'image/bmp',
+      '.ico': 'image/x-icon'
+    };
+    return mimeTypes[extension] || 'image/png';
   };
 
   const loadFileContent = async (filePath: string) => {
     try {
-      const content = fs.readFileSync(filePath, 'utf8');
-      setFileContent(content);
+      const fileType = getFileType(path.basename(filePath));
+      
+      if (fileType === 'text') {
+        const content = fs.readFileSync(filePath, 'utf8');
+        setFileContent(content);
+      } else if (fileType === 'image') {
+        // For images, convert to base64 data URL
+        const fileBuffer = fs.readFileSync(filePath);
+        const base64 = fileBuffer.toString('base64');
+        const extension = path.extname(filePath).toLowerCase();
+        const mimeType = getMimeType(extension);
+        const dataUrl = `data:${mimeType};base64,${base64}`;
+        setFileContent(dataUrl);
+      } else {
+        // For PDFs, convert to base64 data URL as well
+        const fileBuffer = fs.readFileSync(filePath);
+        const base64 = fileBuffer.toString('base64');
+        const dataUrl = `data:application/pdf;base64,${base64}`;
+        setFileContent(dataUrl);
+      }
+      
       setViewingFile(filePath);
       onViewFile?.(filePath);
     } catch (error) {
@@ -377,7 +422,7 @@ function MainPane({ selectedPath, onSelectPath, onViewFile }: MainPaneProps) {
   const handleItemClick = (item: FileItem) => {
     if (item.isDirectory) {
       onSelectPath(item.path);
-    } else if (isDevFile(item.name)) {
+    } else if (isViewableFile(item.name)) {
       loadFileContent(item.path);
     }
   };
@@ -407,6 +452,45 @@ function MainPane({ selectedPath, onSelectPath, onViewFile }: MainPaneProps) {
       '.hpp': 'cpp'
     };
     return languageMap[extension] || 'text';
+  };
+
+  const renderFileContent = () => {
+    if (!viewingFile || !fileContent) return null;
+    
+    const fileType = getFileType(path.basename(viewingFile));
+    
+    switch (fileType) {
+      case 'image':
+        return (
+          <div className="image-viewer">
+            <img 
+              src={fileContent} 
+              alt={path.basename(viewingFile)}
+              className="file-image"
+            />
+          </div>
+        );
+      
+      case 'pdf':
+        return (
+          <div className="pdf-viewer">
+            <iframe 
+              src={fileContent}
+              type="application/pdf"
+              className="file-pdf"
+              title={path.basename(viewingFile)}
+            />
+          </div>
+        );
+      
+      case 'text':
+      default:
+        return (
+          <pre className={`file-content language-${getFileLanguage(viewingFile)}`}>
+            <code>{fileContent}</code>
+          </pre>
+        );
+    }
   };
 
 
@@ -538,9 +622,7 @@ function MainPane({ selectedPath, onSelectPath, onViewFile }: MainPaneProps) {
             </div>
           </div>
           <div className="file-viewer-content">
-            <pre className={`file-content language-${getFileLanguage(viewingFile)}`}>
-              <code>{fileContent}</code>
-            </pre>
+            {renderFileContent()}
           </div>
         </div>
       )}
