@@ -1,3 +1,9 @@
+## [1.0.9](https://github.com/letanure/electron-dev-runner/compare/v1.0.8...v1.0.9) (2025-07-29)
+
+### 🐛 Bug Fixes
+
+* resolve PATH issues for npm/package manager execution ([6e67624](https://github.com/letanure/electron-dev-runner/commit/6e67624b042b1dc3889ad000076b261ca5ee947a))
+
 ## [1.0.8](https://github.com/letanure/electron-dev-runner/compare/v1.0.7...v1.0.8) (2025-07-29)
 
 ### 🐛 Bug Fixes
