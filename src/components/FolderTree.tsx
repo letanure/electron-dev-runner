@@ -53,7 +53,7 @@ function FolderTree({ selectedPath, onSelectPath }: FolderTreeProps) {
             children: []
           };
         })
-        .sort((a, b) => {
+        .sort((a: any, b: any) => {
           if (a.hasPackageJson && !b.hasPackageJson) return -1;
           if (!a.hasPackageJson && b.hasPackageJson) return 1;
           return a.name.localeCompare(b.name);
@@ -85,10 +85,10 @@ function FolderTree({ selectedPath, onSelectPath }: FolderTreeProps) {
   }, [selectedPath]);
 
   const expandPathTo = (targetPath: string) => {
-    const pathParts = targetPath.split(path.sep);
+    // const pathParts = targetPath.split(path.sep);
     const homeDir = require('os').homedir();
     
-    const updateNodesRecursively = (nodes: TreeNode[], currentPath: string): TreeNode[] => {
+    const updateNodesRecursively = (nodes: TreeNode[], _currentPath: string): TreeNode[] => {
       return nodes.map(node => {
         if (targetPath.startsWith(node.path)) {
           return {

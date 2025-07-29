@@ -1,69 +1,127 @@
-# React + TypeScript + Vite
+# Dev Runner
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A GitHub-styled Electron app for managing and running development projects with automatic port detection and window management.
 
-Currently, two official plugins are available:
+![Dev Runner Screenshot](https://via.placeholder.com/800x500/0d1117/58a6ff?text=Dev+Runner+Screenshot)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## Expanding the ESLint configuration
+- 🗂️ **Project Explorer**: Navigate through your development projects with a familiar folder tree interface
+- 🚀 **Smart Script Detection**: Automatically identifies and highlights development scripts (dev, start, serve, etc.)
+- 🔌 **Auto Port Detection**: Detects development server ports and opens them in new Electron windows
+- 🖥️ **Terminal Integration**: Run non-dev scripts directly in your system terminal
+- 📦 **Dependency Management**: Automatically detects missing dependencies and provides installation options
+- 🎨 **GitHub Theme**: Beautiful light/dark theme system matching GitHub's design
+- 📁 **File Viewer**: View text files, images, and PDFs directly in the app
+- 🛠️ **Process Management**: Track and manage running development servers
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Installation
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Download Pre-built App
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+Download the latest release for your platform:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- **macOS**: [Dev Runner-1.0.0-arm64.dmg](./release/Dev%20Runner-1.0.0-arm64.dmg) (Apple Silicon)
+- **Windows**: Coming soon
+- **Linux**: Coming soon
+
+### Install via npm
+
+```bash
+npm install -g electron-dev-runner
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Usage
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+1. **Launch the app** and navigate to your development projects
+2. **Select a folder** containing a `package.json` file
+3. **Run development scripts** by clicking the play button (opens in new Electron window)
+4. **Run other scripts** by clicking the terminal button (opens in system terminal)
+5. **Install dependencies** when prompted if `node_modules` is missing
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Supported Script Types
+
+**Development Scripts** (auto-detected):
+- `dev`, `start`, `serve`, `preview`, `develop`
+- These open in new Electron windows with automatic port detection
+
+**Other Scripts**:
+- `test`, `lint`, `build`, `deploy`, etc.
+- These run in your system terminal
+
+## Development
+
+### Prerequisites
+
+- Node.js 18+
+- pnpm (recommended) or npm
+
+### Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/letanure/electron-dev-runner.git
+cd electron-dev-runner
+
+# Install dependencies
+pnpm install
+
+# Start development server
+pnpm dev
+
+# In another terminal, start Electron
+pnpm start
 ```
+
+### Build
+
+```bash
+# Build for production
+pnpm build
+
+# Package for local testing
+pnpm pack
+
+# Create distributable
+pnpm dist
+```
+
+## Technology Stack
+
+- **Electron** - Cross-platform desktop app framework
+- **React** - UI library
+- **TypeScript** - Type safety
+- **Vite** - Fast build tool
+- **CSS Variables** - Theme system
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Author
+
+**letanure**
+
+- GitHub: [@letanure](https://github.com/letanure)
+
+## Changelog
+
+### v1.0.0
+
+- Initial release
+- Project explorer with folder tree navigation
+- Smart development script detection
+- Automatic port detection and Electron window management
+- Terminal integration for non-dev scripts
+- Dependency management with auto-installation
+- GitHub-styled theme system (light/dark)
+- File viewer for text, images, and PDFs
+- Process management and monitoring

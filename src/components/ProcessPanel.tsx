@@ -4,8 +4,8 @@ import './ProcessPanel.css';
 const path = require('node:path');
 
 interface ProcessInfo {
-  process: any;
-  window?: any;
+  process: any; // Child process from spawn()
+  window?: any; // Electron BrowserWindow
   projectPath: string;
   scriptName: string;
   port?: number;

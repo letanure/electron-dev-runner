@@ -1,12 +1,30 @@
 {
   "name": "electron-dev-runner",
-  "private": true,
-  "version": "0.0.0",
+  "private": false,
+  "version": "1.0.0",
+  "description": "A GitHub-styled Electron app for managing and running development projects with automatic port detection and window management",
   "main": "main.js",
+  "author": "letanure",
+  "license": "MIT",
+  "keywords": [
+    "electron",
+    "dev-tools",
+    "project-manager",
+    "development",
+    "vite",
+    "react"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/letanure/electron-dev-runner.git"
+  },
   "scripts": {
     "start": "NODE_ENV=development electron .",
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:electron": "npm run build && electron-builder",
+    "dist": "npm run build && electron-builder --publish=never",
+    "pack": "npm run build && electron-builder --dir",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -22,6 +40,7 @@
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react-swc": "^3.10.2",
     "electron": "^37.2.4",
+    "electron-builder": "^26.0.12",
     "eslint": "^9.30.1",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
@@ -31,5 +50,28 @@
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.35.1",
     "vite": "^7.0.4"
+  },
+  "build": {
+    "appId": "com.letanure.electron-dev-runner",
+    "productName": "Dev Runner",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "main.js",
+      "package.json",
+      "node_modules/**/*"
+    ],
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
   }
 }

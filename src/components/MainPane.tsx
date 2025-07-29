@@ -21,8 +21,8 @@ interface FileItem {
 }
 
 interface ProcessInfo {
-  process: any;
-  window?: any;
+  process: any; // Child process from spawn()
+  window?: any; // Electron BrowserWindow
   projectPath: string;
   scriptName: string;
   port?: number;
@@ -263,7 +263,10 @@ function MainPane({ selectedPath, onSelectPath, onViewFile, globalProcesses, onP
       });
 
       devWindow.loadURL(url);
-      devWindow.webContents.openDevTools();
+      // Only open dev tools in development mode
+      if (process.env.NODE_ENV === 'development') {
+        devWindow.webContents.openDevTools();
+      }
     } catch (error) {
       console.error('Error creating Electron window:', error);
     }
@@ -354,15 +357,15 @@ function MainPane({ selectedPath, onSelectPath, onViewFile, globalProcesses, onP
           stdio: ['ignore', 'pipe', 'pipe']
         });
         
-        child.stdout?.on('data', (data) => {
+        child.stdout?.on('data', (data: any) => {
           console.log('osascript stdout:', data.toString());
         });
         
-        child.stderr?.on('data', (data) => {
+        child.stderr?.on('data', (data: any) => {
           console.error('osascript stderr:', data.toString());
         });
         
-        child.on('close', (code) => {
+        child.on('close', (code: any) => {
           console.log(`osascript exited with code ${code}`);
         });
         
@@ -397,7 +400,7 @@ function MainPane({ selectedPath, onSelectPath, onViewFile, globalProcesses, onP
             console.log(`Opened ${terminal.cmd} successfully`);
             break;
           } catch (e) {
-            console.log(`Failed to open ${terminal.cmd}:`, e.message);
+            console.log(`Failed to open ${terminal.cmd}:`, (e as Error).message);
             continue;
           }
         }
@@ -457,7 +460,7 @@ function MainPane({ selectedPath, onSelectPath, onViewFile, globalProcesses, onP
 
     let portDetected = false;
 
-    process.stdout.on('data', (data: Buffer) => {
+    process.stdout.on('data', (data: any) => {
       const output = data.toString();
       console.log(`[${scriptName}]:`, output);
 
@@ -485,7 +488,7 @@ function MainPane({ selectedPath, onSelectPath, onViewFile, globalProcesses, onP
       }
     });
 
-    process.stderr.on('data', (data: Buffer) => {
+    process.stderr.on('data', (data: any) => {
       const output = data.toString();
       console.error(`[${scriptName} ERROR]:`, output);
       
@@ -516,7 +519,7 @@ function MainPane({ selectedPath, onSelectPath, onViewFile, globalProcesses, onP
       }
     });
 
-    process.on('close', (code: number) => {
+    process.on('close', (code: any) => {
       console.log(`${scriptName} process exited with code ${code}`);
       if (code !== 0) {
         console.error(`${scriptName} failed with exit code ${code}`);
@@ -528,7 +531,7 @@ function MainPane({ selectedPath, onSelectPath, onViewFile, globalProcesses, onP
       onProcessUpdate(currentProcesses);
     });
 
-    process.on('error', (error: Error) => {
+    process.on('error', (error: any) => {
       console.error(`Failed to start ${scriptName}:`, error);
       
       // Update process status to error
@@ -542,7 +545,7 @@ function MainPane({ selectedPath, onSelectPath, onViewFile, globalProcesses, onP
     });
 
     // Add timeout to prevent stuck processes
-    const timeout = setTimeout(() => {
+    setTimeout(() => {
       if (globalProcesses.has(processKey) && !portDetected) {
         console.log(`${scriptName}: No port detected after 30 seconds, but keeping process running`);
       }
