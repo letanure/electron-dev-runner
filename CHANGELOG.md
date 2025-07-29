@@ -1,3 +1,9 @@
+## [1.0.5](https://github.com/letanure/electron-dev-runner/compare/v1.0.4...v1.0.5) (2025-07-29)
+
+### 🐛 Bug Fixes
+
+* move electron to devDependencies ([6447509](https://github.com/letanure/electron-dev-runner/commit/6447509c0a5d6c3117431e6443d3e28241a594c9))
+
 ## [1.0.4](https://github.com/letanure/electron-dev-runner/compare/v1.0.3...v1.0.4) (2025-07-29)
 
 ### 🐛 Bug Fixes
