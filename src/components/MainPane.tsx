@@ -170,8 +170,8 @@ function MainPane({ selectedPath, onSelectPath, onViewFile, globalProcesses, onP
       shell: true,
       env: {
         ...process.env,
-        PATH: process.env.PATH + (process.platform === 'win32' ? ';' : ':') + 
-              '/usr/local/bin:/opt/homebrew/bin:/usr/bin'
+        PATH: (process.env.PATH || '') + (process.platform === 'win32' ? ';' : ':') + 
+              '/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin'
       }
     });
 
@@ -444,8 +444,8 @@ function MainPane({ selectedPath, onSelectPath, onViewFile, globalProcesses, onP
       shell: true, // This ensures PATH is used
       env: {
         ...process.env,
-        PATH: process.env.PATH + (process.platform === 'win32' ? ';' : ':') + 
-              '/usr/local/bin:/opt/homebrew/bin:/usr/bin'
+        PATH: (process.env.PATH || '') + (process.platform === 'win32' ? ';' : ':') + 
+              '/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin'
       }
     });
 
