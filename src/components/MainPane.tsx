@@ -28,6 +28,7 @@ function MainPane({ selectedPath }: MainPaneProps) {
   const [readmeFile, setReadmeFile] = useState<string | null>(null);
   const [folderContents, setFolderContents] = useState<FileItem[]>([]);
   const [runningProcesses, setRunningProcesses] = useState<Map<string, any>>(new Map());
+  const [openWindows, setOpenWindows] = useState<Map<string, any>>(new Map());
 
   useEffect(() => {
     loadPackageJson();
@@ -123,7 +124,7 @@ function MainPane({ selectedPath }: MainPaneProps) {
     return null;
   };
 
-  const openElectronWindow = (url: string, projectName: string) => {
+  const openElectronWindow = (url: string, projectName: string, scriptName: string) => {
     try {
       const { BrowserWindow } = require('@electron/remote') || require('electron').remote;
       if (!BrowserWindow) {
@@ -141,6 +142,24 @@ function MainPane({ selectedPath }: MainPaneProps) {
         }
       });
 
+      // Store the window reference
+      setOpenWindows(prev => new Map(prev.set(scriptName, devWindow)));
+
+      // Listen for window close event
+      devWindow.on('closed', () => {
+        console.log(`Dev window closed for ${scriptName}, stopping process...`);
+        
+        // Remove window from state
+        setOpenWindows(prev => {
+          const newMap = new Map(prev);
+          newMap.delete(scriptName);
+          return newMap;
+        });
+
+        // Stop the associated process
+        stopScript(scriptName);
+      });
+
       devWindow.loadURL(url);
       devWindow.webContents.openDevTools();
     } catch (error) {
@@ -150,6 +169,8 @@ function MainPane({ selectedPath }: MainPaneProps) {
 
   const stopScript = (scriptName: string) => {
     const process = runningProcesses.get(scriptName);
+    const window = openWindows.get(scriptName);
+    
     if (process) {
       console.log(`Stopping: ${scriptName}`);
       process.kill('SIGTERM');
@@ -162,6 +183,18 @@ function MainPane({ selectedPath }: MainPaneProps) {
         }
       }, 5000);
     }
+
+    // Close the associated window if it exists
+    if (window && !window.isDestroyed()) {
+      window.close();
+    }
+
+    // Clean up window state
+    setOpenWindows(prev => {
+      const newMap = new Map(prev);
+      newMap.delete(scriptName);
+      return newMap;
+    });
   };
 
   const runScript = async (scriptName: string) => {
@@ -195,7 +228,7 @@ function MainPane({ selectedPath }: MainPaneProps) {
           
           // Wait a bit for server to be fully ready
           setTimeout(() => {
-            openElectronWindow(url, projectName);
+            openElectronWindow(url, projectName, scriptName);
           }, 2000);
         }
       }
@@ -211,7 +244,7 @@ function MainPane({ selectedPath }: MainPaneProps) {
           portDetected = true;
           const url = `http://localhost:${port}`;
           setTimeout(() => {
-            openElectronWindow(url, projectName);
+            openElectronWindow(url, projectName, scriptName);
           }, 2000);
         }
       }
