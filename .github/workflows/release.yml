@@ -83,8 +83,15 @@ jobs:
               delete pkg.devDependencies.electron;
               fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
               console.log('✓ Moved electron to dependencies');
+            } else {
+              console.log('⚠ Electron not found in devDependencies');
             }
           "
+          # Show package.json to debug
+          echo "=== Current package.json dependencies ==="
+          cat package.json | grep -A 10 -B 2 '"dependencies"'
+          echo "=== Current package.json devDependencies ==="
+          cat package.json | grep -A 10 -B 2 '"devDependencies"'
           # Run electron-builder directly
           npx electron-builder --publish=never
         env:
