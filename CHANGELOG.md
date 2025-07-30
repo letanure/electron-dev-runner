@@ -1,3 +1,9 @@
+## [1.2.9](https://github.com/letanure/electron-dev-runner/compare/v1.2.8...v1.2.9) (2025-07-30)
+
+### 🐛 Bug Fixes
+
+* add debug output for package.json dependencies during build ([4c486c8](https://github.com/letanure/electron-dev-runner/commit/4c486c8d7841c8a29b081f1facea74ce4dadabb3))
+
 ## [1.2.8](https://github.com/letanure/electron-dev-runner/compare/v1.2.7...v1.2.8) (2025-07-30)
 
 ### 🐛 Bug Fixes
