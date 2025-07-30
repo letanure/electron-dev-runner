@@ -1,3 +1,9 @@
+## [1.3.4](https://github.com/letanure/electron-dev-runner/compare/v1.3.3...v1.3.4) (2025-07-30)
+
+### 🐛 Bug Fixes
+
+* specify shell for version extraction step in release workflow ([c32a55d](https://github.com/letanure/electron-dev-runner/commit/c32a55d1e166a2257ece1f9a187ba17e54484f00))
+
 ## [1.3.3](https://github.com/letanure/electron-dev-runner/compare/v1.3.2...v1.3.3) (2025-07-30)
 
 ### 🐛 Bug Fixes
