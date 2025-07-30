@@ -1,3 +1,9 @@
+## [1.2.8](https://github.com/letanure/electron-dev-runner/compare/v1.2.7...v1.2.8) (2025-07-30)
+
+### 🐛 Bug Fixes
+
+* remove conditional check for new release ([9473891](https://github.com/letanure/electron-dev-runner/commit/94738916820e13eb03183643ca8b07cfa47d66cf))
+
 ## [1.2.7](https://github.com/letanure/electron-dev-runner/compare/v1.2.6...v1.2.7) (2025-07-30)
 
 ### 🐛 Bug Fixes
