@@ -1,3 +1,9 @@
+## [1.2.7](https://github.com/letanure/electron-dev-runner/compare/v1.2.6...v1.2.7) (2025-07-30)
+
+### 🐛 Bug Fixes
+
+* simplify condition for build job execution ([b44220a](https://github.com/letanure/electron-dev-runner/commit/b44220ad4186ea66e5ad877bc0a869b9a4baefc4))
+
 ## [1.2.6](https://github.com/letanure/electron-dev-runner/compare/v1.2.5...v1.2.6) (2025-07-30)
 
 ### 🐛 Bug Fixes
