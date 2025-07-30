@@ -1,3 +1,9 @@
+## [1.3.6](https://github.com/letanure/electron-dev-runner/compare/v1.3.5...v1.3.6) (2025-07-30)
+
+### 🐛 Bug Fixes
+
+* ensure 'ref: main' is specified in checkout steps for consistency ([da68bfc](https://github.com/letanure/electron-dev-runner/commit/da68bfcde7d5617d1c9732324ff18c8fea6ceafb))
+
 ## [1.3.5](https://github.com/letanure/electron-dev-runner/compare/v1.3.4...v1.3.5) (2025-07-30)
 
 ### 🐛 Bug Fixes
