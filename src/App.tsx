@@ -127,36 +127,46 @@ function App() {
               <ThemeToggle />
             </div>
           </div>
-          <Breadcrumb 
-            selectedPath={selectedPath}
-            onSelectPath={setSelectedPath}
-            viewingFile={viewingFile}
-            onCloseFile={() => setViewingFile(null)}
-          />
         </header>
         
         <div className="main-content">
-          <aside className="sidebar">
-            <FolderTree 
+          <div className="project-explorer">
+            <div className="project-explorer-header">
+              <div>
+                <h3>Project Explorer</h3>
+                <p className="project-explorer-desc">Navigate and run scripts</p>
+              </div>
+            </div>
+            <Breadcrumb 
               selectedPath={selectedPath}
               onSelectPath={setSelectedPath}
+              viewingFile={viewingFile}
+              onCloseFile={() => setViewingFile(null)}
             />
-          </aside>
-          
-          <main className="content">
-            <MainPane 
-              selectedPath={selectedPath} 
-              onSelectPath={setSelectedPath}
-              onViewFile={setViewingFile}
-              globalProcesses={globalProcesses}
-              onProcessUpdate={handleProcessUpdate}
-            />
-          </main>
+            <div className="project-content">
+              <aside className="sidebar">
+                <FolderTree 
+                  selectedPath={selectedPath}
+                  onSelectPath={setSelectedPath}
+                />
+              </aside>
+              
+              <main className="content">
+                <MainPane 
+                  selectedPath={selectedPath} 
+                  onSelectPath={setSelectedPath}
+                  onViewFile={setViewingFile}
+                  globalProcesses={globalProcesses}
+                  onProcessUpdate={handleProcessUpdate}
+                />
+              </main>
+            </div>
+          </div>
 
           {showServerPanel && (
-            <aside className="server-panel-container">
+            <div className="system-servers">
               <ServerPanel selectedPath={selectedPath} />
-            </aside>
+            </div>
           )}
         </div>
       </div>

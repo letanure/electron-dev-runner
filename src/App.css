@@ -83,6 +83,46 @@
   background-color: var(--gh-border-default);
 }
 
+.project-explorer {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background-color: var(--gh-canvas-default);
+  overflow: hidden;
+}
+
+.project-explorer-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--gh-border-muted);
+  background-color: var(--gh-canvas-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.project-explorer-header h3 {
+  margin: 0 0 2px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gh-fg-default);
+}
+
+.project-explorer-desc {
+  margin: 0;
+  font-size: 11px;
+  color: var(--gh-fg-muted);
+  font-style: italic;
+}
+
+.project-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  gap: 1px;
+  background-color: var(--gh-border-default);
+}
+
 .sidebar {
   width: 280px;
   background-color: var(--gh-canvas-default);
@@ -98,11 +138,14 @@
   min-width: 0;
 }
 
-.server-panel-container {
+.system-servers {
   width: 360px;
   background-color: var(--gh-canvas-default);
-  overflow-y: auto;
+  overflow: hidden;
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--gh-border-default);
 }
 
 .panel-toggle {

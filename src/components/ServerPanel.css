@@ -1,9 +1,9 @@
 .server-panel {
-  height: 100%;
+  flex: 1;
   background-color: var(--gh-canvas-default);
-  border-left: 1px solid var(--gh-border-default);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .server-panel-header {
