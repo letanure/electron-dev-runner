@@ -1,110 +1,67 @@
-name: Release
+name: Release Electron App
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*'
 
 permissions:
   contents: write
-  issues: write
-  pull-requests: write
 
 jobs:
-  release:
-    runs-on: ubuntu-latest
-    outputs:
-      new-release-published: ${{ steps.semantic.outputs.new-release-published }}
-      new-release-version: ${{ steps.semantic.outputs.new-release-version }}
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 8
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Run semantic-release
-        id: semantic
-        run: pnpm semantic-release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-  build:
-    needs: release
+  build-and-release:
     runs-on: ${{ matrix.os }}
-
+    
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-
+        include:
+          - os: macos-latest
+            platform: darwin
+            arch: arm64
+          - os: ubuntu-latest  
+            platform: linux
+            arch: x64
+          - os: windows-latest
+            platform: win32
+            arch: x64
+    
     steps:
-      - name: Check out Git repository
+      - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Install Node.js
+        
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-
-      - name: Install pnpm
+          node-version: '20'
+          
+      - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 8
-
+          
       - name: Install dependencies
         run: pnpm install
-
-      - name: Build Electron app
+        
+      - name: Build app
+        run: pnpm run build
+        
+      - name: Package Electron app
         run: |
-          pnpm run build
-          # Add electron to dependencies temporarily for bundling
+          # Add electron to dependencies temporarily for electron-builder
           npm pkg set dependencies.electron="^37.2.4"
           pnpm run dist
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Get latest tag
-        id: tag
-        run: echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
-
-      - name: Upload release assets
-        if: startsWith(steps.tag.outputs.tag, 'v')
+          SKIP_NOTARIZATION: true
+          
+      - name: Upload Release Assets
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.tag.outputs.tag }}
           files: |
             release/*.dmg
             release/*.exe
             release/*.AppImage
+          generate_release_notes: true
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # macOS code signing (optional - add these secrets if you have Apple Developer account)
-          # CSC_LINK: ${{ secrets.CSC_LINK }}
-          # CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
-          # Apple ID for notarization (optional)
-          # APPLE_ID: ${{ secrets.APPLE_ID }}
-          # APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
-          # APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          
-          # Windows code signing (optional - add these secrets if you have certificate)
-          # WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
-          # WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
-          
-          # Disable macOS notarization for now (can enable later with Apple Developer account)
-          SKIP_NOTARIZATION: true
