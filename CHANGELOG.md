@@ -1,3 +1,9 @@
+## [1.3.0](https://github.com/letanure/electron-dev-runner/compare/v1.2.12...v1.3.0) (2025-07-30)
+
+### 🚀 Features
+
+* add listing of built files and installer files in release workflow ([8560678](https://github.com/letanure/electron-dev-runner/commit/856067841fe874ed7dfcde9b1381ad1a1173f6bc))
+
 ## [1.2.12](https://github.com/letanure/electron-dev-runner/compare/v1.2.11...v1.2.12) (2025-07-30)
 
 ### 🐛 Bug Fixes
