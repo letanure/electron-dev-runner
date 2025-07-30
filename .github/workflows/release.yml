@@ -89,14 +89,14 @@ jobs:
           echo "=== All installer files ==="
           find . -name "*.dmg" -o -name "*.exe" -o -name "*.AppImage" -o -name "*.zip" 2>/dev/null || echo "No installer files found"
 
-      - name: Get latest tag
-        id: tag
-        run: echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+      - name: Get version from package.json
+        id: version
+        run: echo "version=v$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
       - name: Upload release assets
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.tag.outputs.tag }}
+          tag_name: ${{ steps.version.outputs.version }}
           files: release/*{.dmg,.exe,.AppImage}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
