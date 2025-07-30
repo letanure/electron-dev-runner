@@ -1,105 +1,154 @@
 # Electron Dev Runner
 
-An Electron desktop app that helps developers manage and run their Node.js projects. Navigate through your development folders, run dev scripts in separate Electron windows with automatic port detection, and manage all your development processes from one clean interface.
+A GitHub-styled Electron app for managing and running development projects with automatic port detection and window management.
 
-![Dev Runner Screenshot](https://via.placeholder.com/800x500/0d1117/58a6ff?text=Dev+Runner+Screenshot)
+![Electron Dev Runner Screenshot](https://via.placeholder.com/800x500/0d1117/58a6ff?text=Electron+Dev+Runner)
 
 ## Features
 
-- 🗂️ **Project Explorer**: Navigate through your development projects with a familiar folder tree interface
-- 🚀 **Smart Script Detection**: Automatically identifies and highlights development scripts (dev, start, serve, etc.)
-- 🔌 **Auto Port Detection**: Detects development server ports and opens them in new Electron windows
-- 🖥️ **Terminal Integration**: Run non-dev scripts directly in your system terminal
-- 📦 **Dependency Management**: Automatically detects missing dependencies and provides installation options
-- 🎨 **GitHub Theme**: Beautiful light/dark theme system matching GitHub's design
-- 📁 **File Viewer**: View text files, images, and PDFs directly in the app
-- 🛠️ **Process Management**: Track and manage running development servers
+### Project Management
+- **Project Explorer**: Navigate through your project files and folders with breadcrumb navigation
+- **File Viewer**: View files directly in the app with syntax highlighting
+- **Script Runner**: Execute npm/yarn/pnpm scripts directly from the interface
+- **Process Management**: Start, stop, and monitor running development processes
+
+### Server Discovery & Management
+- **Automatic Port Scanning**: Discovers running dev servers every 10 seconds on common ports (3000, 3001, 8080, 5173, etc.)
+- **Server Launch**: Launch discovered servers in dedicated Electron windows
+- **Process Information**: Shows process details (PID, command, working directory)
+- **Pause/Resume**: Control auto-scanning with a convenient pause button
+
+### User Experience
+- **GitHub-styled UI**: Clean, familiar interface following GitHub's design patterns
+- **Theme Support**: Light and dark theme toggle with system preference detection
+- **Smooth Transitions**: Professional loading screen with fade animations
+- **Responsive Layout**: Adaptive three-panel layout (Project Explorer | Files | Running Servers)
 
 ## Installation
 
-### Download Pre-built App
-
+### From Releases (Recommended)
 Download the latest release for your platform:
+- **macOS**: `.dmg` installer
+- **Windows**: `.exe` installer  
+- **Linux**: `.AppImage` portable app
 
-- **macOS**: [Electron Dev Runner-1.0.0-arm64.dmg](./release/Dev%20Runner-1.0.0-arm64.dmg) (Apple Silicon)
-- **Windows**: Coming soon
-- **Linux**: Coming soon
+[Download Latest Release](https://github.com/letanure/electron-dev-runner/releases)
 
-### Install via npm (Global CLI)
-
+### From NPM
 ```bash
 npm install -g @letanure/electron-dev-runner
-
-# Then run anywhere:
-electron-dev-runner
-# or
-dev-runner
 ```
 
-**Note**: The npm package includes the full Electron runtime (~100MB download). For smaller downloads, use the platform-specific installers above.
-
-## Usage
-
-1. **Launch the app** and navigate to your development projects
-2. **Select a folder** containing a `package.json` file
-3. **Run development scripts** by clicking the play button (opens in new Electron window)
-4. **Run other scripts** by clicking the terminal button (opens in system terminal)
-5. **Install dependencies** when prompted if `node_modules` is missing
-
-### Supported Script Types
-
-**Development Scripts** (auto-detected):
-- `dev`, `start`, `serve`, `preview`, `develop`
-- These open in new Electron windows with automatic port detection
-
-**Other Scripts**:
-- `test`, `lint`, `build`, `deploy`, etc.
-- These run in your system terminal
-
-## Development
-
-### Prerequisites
-
-- Node.js 18+
-- pnpm (recommended) or npm
-
-### Setup
-
+### From Source
 ```bash
-# Clone the repository
 git clone https://github.com/letanure/electron-dev-runner.git
 cd electron-dev-runner
-
-# Install dependencies
 pnpm install
-
-# Start development server
-pnpm dev
-
-# In another terminal, start Electron
+pnpm run build
 pnpm start
 ```
 
-### Build
+## Usage
 
+### As a Desktop App
+Simply download and run the app from the releases page. The app will automatically scan for running dev servers and allow you to manage your development projects.
+
+### As a Global CLI Tool
 ```bash
-# Build for production
-pnpm build
+# Run in current directory
+electron-dev-runner
+# or
+dev-runner
 
-# Package for local testing
-pnpm pack
-
-# Create distributable
-pnpm dist
+# Run in specific directory
+electron-dev-runner /path/to/your/project
 ```
 
-## Technology Stack
+### Key Features in Action
 
-- **Electron** - Cross-platform desktop app framework
-- **React** - UI library
-- **TypeScript** - Type safety
-- **Vite** - Fast build tool
-- **CSS Variables** - Theme system
+1. **Project Navigation**: Use the sidebar to browse folders and files
+2. **Script Execution**: Click script buttons to run npm/yarn commands
+3. **Server Discovery**: Running dev servers appear automatically in the right panel
+4. **Window Management**: Click the play button to open servers in new windows
+5. **Process Control**: Stop processes and view their status in real-time
+
+## Development
+
+```bash
+# Install dependencies
+pnpm install
+
+# Start development server (web version)
+pnpm dev
+
+# Start Electron app in development
+pnpm start
+
+# Build for production
+pnpm run build
+
+# Package as Electron app (unpacked)
+pnpm run pack
+
+# Build distributable installers
+pnpm run dist
+```
+
+### Building and Releasing
+
+The project uses GitHub Actions for automated releases. When you push a version tag:
+
+```bash
+git tag v1.2.3
+git push origin v1.2.3
+```
+
+GitHub Actions will automatically:
+1. Build the app for macOS, Windows, and Linux
+2. Create installers (.dmg, .exe, .AppImage)
+3. Upload them as release assets
+
+#### Electron Dependency Trick
+
+**Why**: electron-builder requires `electron` to be in `dependencies`, not `devDependencies`, but we want to keep it in `devDependencies` for proper development workflow.
+
+**Solution**: The GitHub Actions workflow temporarily moves `electron` from `devDependencies` to `dependencies` during the build process:
+
+```javascript
+// Move electron to dependencies
+const pkg = require('./package.json');
+pkg.dependencies.electron = pkg.devDependencies.electron;
+delete pkg.devDependencies.electron;
+
+// Build...
+
+// Restore electron to devDependencies  
+pkg.devDependencies.electron = pkg.dependencies.electron;
+delete pkg.dependencies.electron;
+```
+
+This ensures electron-builder works while keeping the package.json clean.
+
+## Project Structure
+
+```
+electron-dev-runner/
+├── src/                    # React application source
+│   ├── components/         # React components
+│   ├── contexts/          # React contexts (theme, etc.)
+│   └── main.tsx           # App entry point
+├── main.js                # Electron main process
+├── bin/                   # CLI executable scripts
+├── .github/workflows/     # GitHub Actions
+├── index-electron.html    # Production HTML template
+└── package.json           # Project configuration
+```
+
+## Supported Platforms
+
+- macOS (Intel & Apple Silicon)
+- Windows (x64)
+- Linux (x64)
 
 ## Contributing
 
@@ -111,24 +160,4 @@ pnpm dist
 
 ## License
 
-MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Author
-
-**letanure**
-
-- GitHub: [@letanure](https://github.com/letanure)
-
-## Changelog
-
-### v1.0.0
-
-- Initial release
-- Project explorer with folder tree navigation
-- Smart development script detection
-- Automatic port detection and Electron window management
-- Terminal integration for non-dev scripts
-- Dependency management with auto-installation
-- GitHub-styled theme system (light/dark)
-- File viewer for text, images, and PDFs
-- Process management and monitoring
+MIT © [letanure](https://github.com/letanure)
