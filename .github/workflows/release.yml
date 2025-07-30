@@ -97,9 +97,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.tag.outputs.tag }}
-          files: |
-            release/*.dmg
-            release/*.exe
-            release/*.AppImage
+          files: release/*{.dmg,.exe,.AppImage}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
