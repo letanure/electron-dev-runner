@@ -1,3 +1,9 @@
+## [1.3.2](https://github.com/letanure/electron-dev-runner/compare/v1.3.1...v1.3.2) (2025-07-30)
+
+### 🐛 Bug Fixes
+
+* update release workflow to use version from package.json for tagging ([c72b367](https://github.com/letanure/electron-dev-runner/commit/c72b36777345d3b72c7c2856f75a3f3b6525f1c4))
+
 ## [1.3.1](https://github.com/letanure/electron-dev-runner/compare/v1.3.0...v1.3.1) (2025-07-30)
 
 ### 🐛 Bug Fixes
