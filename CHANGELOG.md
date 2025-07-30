@@ -1,3 +1,13 @@
+## [1.2.6](https://github.com/letanure/electron-dev-runner/compare/v1.2.5...v1.2.6) (2025-07-30)
+
+### 🐛 Bug Fixes
+
+* add NPM_TOKEN back ([a8eada8](https://github.com/letanure/electron-dev-runner/commit/a8eada8af92b7ce9c679dd39261e35b17510cf58))
+
+### 📦 Code Refactoring
+
+* re add sematinc release ([e743685](https://github.com/letanure/electron-dev-runner/commit/e7436852e1569a8da6ac00b48f1476da2f1c9aec))
+
 ## [1.2.1](https://github.com/letanure/electron-dev-runner/compare/v1.2.0...v1.2.1) (2025-07-29)
 
 ### 💎 Styles
