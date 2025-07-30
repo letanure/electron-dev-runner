@@ -1,3 +1,9 @@
+## [1.3.5](https://github.com/letanure/electron-dev-runner/compare/v1.3.4...v1.3.5) (2025-07-30)
+
+### 🐛 Bug Fixes
+
+* enable ASAR packaging for improved file handling and security ([8f674c6](https://github.com/letanure/electron-dev-runner/commit/8f674c6de10310bfe706c2e2a0d5159055ff7146))
+
 ## [1.3.4](https://github.com/letanure/electron-dev-runner/compare/v1.3.3...v1.3.4) (2025-07-30)
 
 ### 🐛 Bug Fixes
