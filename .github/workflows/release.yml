@@ -45,7 +45,7 @@ jobs:
 
   build:
     needs: release
-    if: needs.release.outputs.new-release-published == 'true'
+    if: needs.release.outputs.new-release-published
     runs-on: ${{ matrix.os }}
 
     strategy:
