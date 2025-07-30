@@ -73,27 +73,9 @@ jobs:
       - name: Build Electron app
         run: |
           pnpm run build
-          # Temporarily move electron from devDependencies to dependencies
-          node -e "
-            const fs = require('fs');
-            const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-            if (pkg.devDependencies && pkg.devDependencies.electron) {
-              pkg.dependencies = pkg.dependencies || {};
-              pkg.dependencies.electron = pkg.devDependencies.electron;
-              delete pkg.devDependencies.electron;
-              fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
-              console.log('✓ Moved electron to dependencies');
-            } else {
-              console.log('⚠ Electron not found in devDependencies');
-            }
-          "
-          # Show package.json to debug
-          echo "=== Current package.json dependencies ==="
-          cat package.json | grep -A 10 -B 2 '"dependencies"'
-          echo "=== Current package.json devDependencies ==="
-          cat package.json | grep -A 10 -B 2 '"devDependencies"'
-          # Run electron-builder directly
-          npx electron-builder --publish=never
+          # Add electron to dependencies temporarily for bundling
+          npm pkg set dependencies.electron="^37.2.4"
+          pnpm run dist
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SKIP_NOTARIZATION: true
