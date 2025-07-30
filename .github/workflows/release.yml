@@ -81,6 +81,14 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SKIP_NOTARIZATION: true
 
+      - name: List built files
+        shell: bash
+        run: |
+          echo "=== Contents of release directory ==="
+          ls -la release/ 2>/dev/null || echo "No release directory found"
+          echo "=== All installer files ==="
+          find . -name "*.dmg" -o -name "*.exe" -o -name "*.AppImage" -o -name "*.zip" 2>/dev/null || echo "No installer files found"
+
       - name: Get latest tag
         id: tag
         run: echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
