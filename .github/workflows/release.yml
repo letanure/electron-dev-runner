@@ -93,10 +93,29 @@ jobs:
         id: version
         run: echo "version=v$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
-      - name: Upload release assets
+      - name: Upload release assets (macOS)
+        if: runner.os == 'macOS'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.version.outputs.version }}
-          files: release/*{.dmg,.exe,.AppImage}
+          files: release/*.dmg
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Upload release assets (Windows)
+        if: runner.os == 'Windows'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          files: release/*Setup*.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Upload release assets (Linux)
+        if: runner.os == 'Linux'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          files: release/*.AppImage
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
