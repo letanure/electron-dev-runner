@@ -1,7 +1,13 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, protocol } = require('electron');
 const path = require('path');
+const { URL } = require('url');
 
 require('@electron/remote/main').initialize();
+
+// Register file protocol to handle local files properly
+protocol.registerSchemesAsPrivileged([
+  { scheme: 'app', privileges: { standard: true, secure: true, supportFetchAPI: true } }
+]);
 
 // Store references to all windows
 const windows = new Map();
@@ -14,7 +20,9 @@ function createWindow() {
       nodeIntegration: true,
       contextIsolation: false,
       enableRemoteModule: true,
-      webSecurity: false
+      webSecurity: false,
+      allowRunningInsecureContent: true,
+      experimentalFeatures: true
     }
   });
 
@@ -26,11 +34,37 @@ function createWindow() {
     mainWindow.loadURL('http://localhost:5173');
     mainWindow.webContents.openDevTools();
   } else {
-    mainWindow.loadFile(path.join(__dirname, 'dist/index.html'));
+    mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
+      console.error('Failed to load:', errorCode, errorDescription);
+    });
+    
+    mainWindow.webContents.on('did-finish-load', () => {
+      console.log('Page loaded successfully');
+      mainWindow.webContents.openDevTools();
+    });
+    
+    // Use the custom protocol
+    mainWindow.loadURL('app://dist/index.html');
   }
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  // Register protocol for serving local files
+  protocol.handle('app', (request) => {
+    const url = request.url.substring(6); // Remove 'app://'
+    const normalizedPath = path.normalize(path.join(__dirname, url));
+    return new Response(require('fs').readFileSync(normalizedPath), {
+      headers: {
+        'content-type': url.endsWith('.js') ? 'application/javascript' : 
+                       url.endsWith('.css') ? 'text/css' : 
+                       url.endsWith('.html') ? 'text/html' : 
+                       'text/plain'
+      }
+    });
+  });
+
+  createWindow();
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
