@@ -47,9 +47,23 @@ jobs:
         
       - name: Package Electron app
         run: |
-          # Add electron to dependencies temporarily for electron-builder
-          npm pkg set dependencies.electron="^37.2.4"
+          # Temporarily move electron from devDependencies to dependencies
+          node -e "
+            const pkg = require('./package.json');
+            pkg.dependencies = pkg.dependencies || {};
+            pkg.dependencies.electron = pkg.devDependencies.electron;
+            delete pkg.devDependencies.electron;
+            require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2));
+          "
           pnpm run dist
+          # Restore electron to devDependencies
+          node -e "
+            const pkg = require('./package.json');
+            pkg.devDependencies = pkg.devDependencies || {};
+            pkg.devDependencies.electron = pkg.dependencies.electron;
+            delete pkg.dependencies.electron;
+            require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2));
+          "
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SKIP_NOTARIZATION: true
