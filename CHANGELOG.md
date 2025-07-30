@@ -1,3 +1,9 @@
+## [1.2.11](https://github.com/letanure/electron-dev-runner/compare/v1.2.10...v1.2.11) (2025-07-30)
+
+### 🐛 Bug Fixes
+
+* update pnpm version ([421a970](https://github.com/letanure/electron-dev-runner/commit/421a97039752bb5a946f122f74b844ff811b1cdf))
+
 ## [1.2.10](https://github.com/letanure/electron-dev-runner/compare/v1.2.9...v1.2.10) (2025-07-30)
 
 ### 🐛 Bug Fixes
