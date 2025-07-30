@@ -24,13 +24,36 @@ interface ServerPanelProps {
 function ServerPanel({ selectedPath }: ServerPanelProps) {
   const [discoveredServers, setDiscoveredServers] = useState<DiscoveredServer[]>([]);
   const [isScanning, setIsScanning] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [countdown, setCountdown] = useState(10);
 
   // Common dev server ports to scan
   const DEV_PORTS = [3000, 3001, 8080, 8081, 5173, 4200, 9000, 3333, 8000, 8888, 5000, 5001];
 
+  // Auto-scan every 10 seconds with countdown
   useEffect(() => {
     scanForDevServers();
-  }, [selectedPath]);
+    
+    if (!isPaused) {
+      const scanInterval = setInterval(() => {
+        if (!isPaused) {
+          scanForDevServers();
+          setCountdown(10);
+        }
+      }, 10000);
+      
+      const countdownInterval = setInterval(() => {
+        if (!isPaused) {
+          setCountdown(prev => prev > 1 ? prev - 1 : 10);
+        }
+      }, 1000);
+      
+      return () => {
+        clearInterval(scanInterval);
+        clearInterval(countdownInterval);
+      };
+    }
+  }, [selectedPath, isPaused]);
 
   // Check if a port is in use
   const checkPort = (port: number): Promise<boolean> => {
@@ -229,13 +252,12 @@ function ServerPanel({ selectedPath }: ServerPanelProps) {
           <p className="server-panel-desc">Launch on an app</p>
         </div>
         <button
-          className="refresh-button gh-btn gh-btn-secondary"
-          onClick={scanForDevServers}
-          disabled={isScanning}
+          className={`scan-status-button gh-btn ${isPaused ? 'gh-btn-primary' : 'gh-btn-secondary'}`}
+          onClick={() => setIsPaused(!isPaused)}
           type="button"
-          title="Scan for running dev servers"
+          title={isPaused ? 'Resume auto-scan' : 'Pause auto-scan'}
         >
-          {isScanning ? 'Scanning...' : 'Scan'}
+          {isPaused ? 'Paused' : isScanning ? 'Scanning...' : `Next scan in ${countdown}s`}
         </button>
       </div>
       
