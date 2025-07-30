@@ -1,3 +1,9 @@
+## [1.3.1](https://github.com/letanure/electron-dev-runner/compare/v1.3.0...v1.3.1) (2025-07-30)
+
+### 🐛 Bug Fixes
+
+* simplify file pattern for release asset uploads ([cde761e](https://github.com/letanure/electron-dev-runner/commit/cde761e9d2742ae738727bb24c194ef286bdd7f1))
+
 ## [1.3.0](https://github.com/letanure/electron-dev-runner/compare/v1.2.12...v1.3.0) (2025-07-30)
 
 ### 🚀 Features
