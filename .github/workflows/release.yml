@@ -31,7 +31,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 8
+          version: latest
 
       - name: Install dependencies
         run: pnpm install
@@ -65,7 +65,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 8
+          version: latest
 
       - name: Install dependencies
         run: pnpm install
@@ -73,8 +73,9 @@ jobs:
       - name: Build Electron app
         run: |
           pnpm run build
-          # Add electron to dependencies temporarily for bundling
+          # Add electron to dependencies and remove from devDependencies temporarily
           npm pkg set dependencies.electron="^37.2.4"
+          npm pkg delete devDependencies.electron
           pnpm run dist
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
