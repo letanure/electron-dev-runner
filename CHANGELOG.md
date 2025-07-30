@@ -1,3 +1,9 @@
+## [1.2.12](https://github.com/letanure/electron-dev-runner/compare/v1.2.11...v1.2.12) (2025-07-30)
+
+### 🐛 Bug Fixes
+
+* adjust Electron dependency ([fecaf77](https://github.com/letanure/electron-dev-runner/commit/fecaf771b9e2d5bb0acd49af297ddf7b9b11dbe6))
+
 ## [1.2.11](https://github.com/letanure/electron-dev-runner/compare/v1.2.10...v1.2.11) (2025-07-30)
 
 ### 🐛 Bug Fixes
