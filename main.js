@@ -4,10 +4,7 @@ const { URL } = require('url');
 
 require('@electron/remote/main').initialize();
 
-// Register file protocol to handle local files properly
-protocol.registerSchemesAsPrivileged([
-  { scheme: 'app', privileges: { standard: true, secure: true, supportFetchAPI: true } }
-]);
+// No need for custom protocol when using loadFile()
 
 // Store references to all windows
 const windows = new Map();
@@ -34,34 +31,13 @@ function createWindow() {
     mainWindow.loadURL('http://localhost:5173');
     mainWindow.webContents.openDevTools();
   } else {
-    mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
-      console.error('Failed to load:', errorCode, errorDescription);
-    });
-    
-    mainWindow.webContents.on('did-finish-load', () => {
-      console.log('Page loaded successfully');
-    });
-    
-    // Use the custom protocol
-    mainWindow.loadURL('app://dist/index.html');
+    // Use file:// protocol for ASAR compatibility
+    const indexPath = path.join(__dirname, 'dist', 'index.html');
+    mainWindow.loadFile('dist/index.html');
   }
 }
 
 app.whenReady().then(() => {
-  // Register protocol for serving local files
-  protocol.handle('app', (request) => {
-    const url = request.url.substring(6); // Remove 'app://'
-    const normalizedPath = path.normalize(path.join(__dirname, url));
-    return new Response(require('fs').readFileSync(normalizedPath), {
-      headers: {
-        'content-type': url.endsWith('.js') ? 'application/javascript' : 
-                       url.endsWith('.css') ? 'text/css' : 
-                       url.endsWith('.html') ? 'text/html' : 
-                       'text/plain'
-      }
-    });
-  });
-
   createWindow();
 });
 

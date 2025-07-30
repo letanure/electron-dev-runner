@@ -84,7 +84,7 @@
       "node_modules/**/*",
       "!node_modules/.bin"
     ],
-    "asar": false,
+    "asar": true,
     "mac": {
       "category": "public.app-category.developer-tools",
       "target": [
