@@ -73,10 +73,10 @@ jobs:
       - name: Build Electron app
         run: |
           pnpm run build
-          # Add electron to dependencies and remove from devDependencies temporarily
-          npm pkg set dependencies.electron="^37.2.4"
-          npm pkg delete devDependencies.electron
-          pnpm run dist
+          # Ensure electron is only in devDependencies (remove from dependencies if it exists)
+          npm pkg delete dependencies.electron
+          # Run electron-builder directly
+          npx electron-builder --publish=never
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SKIP_NOTARIZATION: true
