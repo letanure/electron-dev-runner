@@ -40,7 +40,6 @@ function createWindow() {
     
     mainWindow.webContents.on('did-finish-load', () => {
       console.log('Page loaded successfully');
-      mainWindow.webContents.openDevTools();
     });
     
     // Use the custom protocol
