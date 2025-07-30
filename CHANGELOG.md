@@ -1,3 +1,9 @@
+## [1.2.10](https://github.com/letanure/electron-dev-runner/compare/v1.2.9...v1.2.10) (2025-07-30)
+
+### 🐛 Bug Fixes
+
+* add Electron dependency handling in build process ([f7922fa](https://github.com/letanure/electron-dev-runner/commit/f7922fae2fa55c5bdd6e844981d5810aa25d714a))
+
 ## [1.2.9](https://github.com/letanure/electron-dev-runner/compare/v1.2.8...v1.2.9) (2025-07-30)
 
 ### 🐛 Bug Fixes
