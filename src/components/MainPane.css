@@ -1,6 +1,6 @@
 .main-pane {
-  padding: 16px;
-  height: 100%;
+  padding: 0 16px 16px 16px;
+  flex: 1;
   overflow-y: auto;
 }
 

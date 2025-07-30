@@ -134,8 +134,10 @@
 .content {
   flex: 1;
   background-color: var(--gh-canvas-default);
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   min-width: 0;
+  overflow: hidden;
 }
 
 .system-servers {

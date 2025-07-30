@@ -137,12 +137,6 @@ function App() {
                 <p className="project-explorer-desc">Navigate and run scripts</p>
               </div>
             </div>
-            <Breadcrumb 
-              selectedPath={selectedPath}
-              onSelectPath={setSelectedPath}
-              viewingFile={viewingFile}
-              onCloseFile={() => setViewingFile(null)}
-            />
             <div className="project-content">
               <aside className="sidebar">
                 <FolderTree 
@@ -152,6 +146,12 @@ function App() {
               </aside>
               
               <main className="content">
+                <Breadcrumb 
+                  selectedPath={selectedPath}
+                  onSelectPath={setSelectedPath}
+                  viewingFile={viewingFile}
+                  onCloseFile={() => setViewingFile(null)}
+                />
                 <MainPane 
                   selectedPath={selectedPath} 
                   onSelectPath={setSelectedPath}
